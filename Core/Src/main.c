@@ -22,12 +22,12 @@
 #include "can.h"
 #include "i2c.h"
 #include "usart.h"
-#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "MPU6050.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -37,11 +37,26 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define MPU6050_DEVICE_ID 0x68
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+/**
+ ******************************************************************
+ * @brief   Use UART for printf debug
+ * @param   [in]None
+ * @retval  None
+ * @author  Yuying
+ * @version V1.0
+ * @date    2023/11/18
+ ******************************************************************
+ */
+int fputc(int ch, FILE *f)//printf
+{
+	HAL_UART_Transmit(&huart5, (uint8_t *)&ch, 1,0xffff);
+	return (ch);
+}
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -58,7 +73,8 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint8_t ID;
+int16_t AX,AY,AZ,GX,GY,GZ;
 /* USER CODE END 0 */
 
 /**
@@ -91,10 +107,39 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN2_Init();
   MX_UART5_Init();
-  MX_I2C3_Init();
-  MX_USB_DEVICE_Init();
+  //MX_I2C3_Init();
+  //MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
+	//---------------Allocate Memory-----------------------
+	ID = 0;
+	AX = 0;
+	AY = 0;
+	AZ = 0;
+	GX = 0;
+	GY = 0;
+	GZ = 0;
+	
+	//---------------Enable Power Output-----------------------
+	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
+	HAL_Delay(10);
 
+#ifdef MPU6050_DRIVER
+	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
+	HAL_Delay(10);
+#endif
+
+	//---------------initialize MPU6050-----------------------
+#ifdef MPU6050_DRIVER
+	MPU6050_Init();
+	while(MPU6050_GetID() != MPU6050_DEVICE_ID)
+	{
+		printf("Unable to verify MPU6050 ID: %d\n",ID);
+		HAL_Delay(100);
+		MPU6050_Init();
+	}
+	ID = MPU6050_GetID();
+	printf("MPU6050 Verified! ID: %x\n\r",ID);
+#endif
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -102,11 +147,15 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
 		  HAL_GPIO_TogglePin(GPIOC, LED_Pin); //test led
-		  CDC_Transmit_FS("USB CDC Hello!\n",15); //test usb
 		  HAL_UART_Transmit(&huart5,"Uart5 Hello!\n",13,100); //test uart
+		
+#ifdef MPU6050_DRIVER
+			MPU6050_GetData(&AX,&AY,&AZ,&GX,&GY,&GZ);
+		printf("MPU6050 Data: %x %d %d %d %d %d %d\n\r",ID,AX,AY,AZ,GX,GY,GZ);
+#endif
+		
       HAL_Delay(100);
   }
   /* USER CODE END 3 */

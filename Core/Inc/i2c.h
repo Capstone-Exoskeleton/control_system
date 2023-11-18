@@ -28,7 +28,6 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 extern I2C_HandleTypeDef hi2c3;
@@ -40,7 +39,14 @@ extern I2C_HandleTypeDef hi2c3;
 void MX_I2C3_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+/*软件I2C初始化*/
+void Soft_I2C_Init(void);
+/*软件I2C接收数据*/
+HAL_StatusTypeDef HAL_I2C_Master_Receivex(void *x, uint8_t Saddr, uint8_t *Buf, uint16_t Size, uint32_t Block_Time);
+/*软件I2C发送数据*/
+HAL_StatusTypeDef HAL_I2C_Master_Transmitx(void *x, uint8_t Saddr, uint8_t Raddr, const uint8_t *Data, uint16_t Size, uint32_t Block_Time);
+/*获取软件I2C空闲状态*/
+uint8_t Soft_I2C_Is_Free(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

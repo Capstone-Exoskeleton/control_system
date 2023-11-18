@@ -70,6 +70,9 @@ void Error_Handler(void);
 #define USER_KEY_Pin GPIO_PIN_15
 #define USER_KEY_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
+#define I2C1_SCL_Pin GPIO_PIN_9
+#define I2C1_SDA_Pin GPIO_PIN_8
+#define I2C1_GPIO_Port GPIOC
 
 /* USER CODE END Private defines */
 

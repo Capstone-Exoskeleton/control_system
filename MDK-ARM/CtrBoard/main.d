@@ -38,10 +38,6 @@ ctrboard\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h
 ctrboard\main.o: ../Core/Inc/can.h
 ctrboard\main.o: ../Core/Inc/i2c.h
 ctrboard\main.o: ../Core/Inc/usart.h
-ctrboard\main.o: ../USB_DEVICE/App/usb_device.h
-ctrboard\main.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h
-ctrboard\main.o: ../USB_DEVICE/Target/usbd_conf.h
-ctrboard\main.o: D:\app\keil\ARM\ARMCC\Bin\..\include\stdio.h
-ctrboard\main.o: D:\app\keil\ARM\ARMCC\Bin\..\include\stdlib.h
-ctrboard\main.o: D:\app\keil\ARM\ARMCC\Bin\..\include\string.h
 ctrboard\main.o: ../Core/Inc/gpio.h
+ctrboard\main.o: ../Core/Inc/MPU6050.h
+ctrboard\main.o: D:\app\keil\ARM\ARMCC\Bin\..\include\stdio.h

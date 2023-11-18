@@ -7,10 +7,7 @@
 "ctrboard\usart.o"
 "ctrboard\stm32f4xx_it.o"
 "ctrboard\stm32f4xx_hal_msp.o"
-"ctrboard\usb_device.o"
-"ctrboard\usbd_desc.o"
-"ctrboard\usbd_cdc_if.o"
-"ctrboard\usbd_conf.o"
+"ctrboard\mpu6050.o"
 "ctrboard\stm32f4xx_hal_pcd.o"
 "ctrboard\stm32f4xx_hal_pcd_ex.o"
 "ctrboard\stm32f4xx_ll_usb.o"
@@ -34,10 +31,6 @@
 "ctrboard\stm32f4xx_hal_tim_ex.o"
 "ctrboard\stm32f4xx_hal_uart.o"
 "ctrboard\system_stm32f4xx.o"
-"ctrboard\usbd_core.o"
-"ctrboard\usbd_ctlreq.o"
-"ctrboard\usbd_ioreq.o"
-"ctrboard\usbd_cdc.o"
 --library_type=microlib --strict --scatter "CtrBoard\CtrBoard.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
