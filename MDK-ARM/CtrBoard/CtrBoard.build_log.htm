@@ -5,10 +5,10 @@
 <h2>Tool Versions:</h2>
 IDE-Version: ¦ÌVision V5.33.0.0
 Copyright (C) 2020 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Yuying Lai, Mcmaster University, LIC=----
+License Information: Yuying Lai, Mcmaster University, LIC=585FJ-UZ5Y6-SBCEJ-UYB5C-JDCA5-RVKTG
  
 Tool Versions:
-Toolchain:       MDK-Lite  Version: 5.33.0.0
+Toolchain:       MDK-ARM Plus  Version: 5.33.0.0
 Toolchain Path:  D:\app\keil\ARM\ARMCC\Bin
 C Compiler:      Armcc.exe V5.06 update 7 (build 960)
 Assembler:       Armasm.exe V5.06 update 7 (build 960)
@@ -21,22 +21,22 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.8.0
 Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
-D:\personal-project\control_system\MDK-ARM\CtrBoard.uvprojx
-Project File Date:  11/18/2023
+D:\personal-project\roboeg\control_system\MDK-ARM\CtrBoard.uvprojx
+Project File Date:  11/20/2023
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\app\keil\ARM\ARMCC\Bin'
 Build target 'CtrBoard'
 compiling main.c...
-../Core/Inc/MPU6050.h(5): warning:  #1295-D: Deprecated declaration MPU6050_Init - give arg types
-  void MPU6050_Init();
-../Core/Inc/MPU6050.h(6): warning:  #1295-D: Deprecated declaration MPU6050_GetID - give arg types
-  uint8_t MPU6050_GetID();
-../Core/Src/main.c(123): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/main.c(129): warning:  #188-D: enumerated type mixed with another type
   	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
+../Core/Src/main.c(133): warning:  #188-D: enumerated type mixed with another type
+  	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
+../Core/Src/main.c(141): warning:  #177-D: variable "new_temp"  was declared but never referenced
+    unsigned char new_temp = 0;
 ../Core/Src/main.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=6052 RO-data=508 RW-data=32 ZI-data=2240  
+Program Size: Code=31006 RO-data=750 RW-data=108 ZI-data=5292  
 FromELF: creating hex file...
 "CtrBoard\CtrBoard.axf" - 0 Error(s), 3 Warning(s).
 

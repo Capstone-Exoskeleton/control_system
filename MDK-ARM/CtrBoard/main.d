@@ -39,5 +39,5 @@ ctrboard\main.o: ../Core/Inc/can.h
 ctrboard\main.o: ../Core/Inc/i2c.h
 ctrboard\main.o: ../Core/Inc/usart.h
 ctrboard\main.o: ../Core/Inc/gpio.h
-ctrboard\main.o: ../Core/Inc/MPU6050.h
+ctrboard\main.o: ..\Drivers\MPU6050\MPU6050.h
 ctrboard\main.o: D:\app\keil\ARM\ARMCC\Bin\..\include\stdio.h

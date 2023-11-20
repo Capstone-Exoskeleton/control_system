@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "i2c.h"
 #include "gpio.h"
+#include "stdio.h"
 
 
 /* USER CODE BEGIN 0 */

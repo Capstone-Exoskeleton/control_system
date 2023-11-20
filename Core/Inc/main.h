@@ -74,8 +74,6 @@ void Error_Handler(void);
 #define I2C1_SDA_Pin GPIO_PIN_8
 #define I2C1_GPIO_Port GPIOC
 
-/* USER CODE END Private defines */
-
 #ifdef __cplusplus
 }
 #endif

@@ -61,6 +61,7 @@ Note: Please directly jump to Step5 unless you need to config new pin.
 
 #### Q&A
 Keil Loaded Success But Not Running: https://blog.csdn.net/hjl2832/article/details/126951029
+https://cloud.tencent.com/developer/article/2038019
 
 ## Debug
 1. Use ```printf()```, and it will directly print to serial UART5. Please use RealTerm to read output.

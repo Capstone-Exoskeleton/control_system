@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "MPU6050.h"
 #include "stdio.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -37,7 +38,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define MPU6050_DEVICE_ID 0x68
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -57,6 +58,15 @@ int fputc(int ch, FILE *f)//printf
 	HAL_UART_Transmit(&huart5, (uint8_t *)&ch, 1,0xffff);
 	return (ch);
 }
+void mdelay(unsigned long num_ms)
+{
+	HAL_Delay(num_ms);
+}
+
+void get_tick_count(unsigned long *count)
+{
+	*count = HAL_GetTick();
+}
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -67,6 +77,7 @@ int fputc(int ch, FILE *f)//printf
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -74,7 +85,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t ID;
-int16_t AX,AY,AZ,GX,GY,GZ;
+float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
 /* USER CODE END 0 */
 
 /**
@@ -108,16 +119,11 @@ int main(void)
   MX_CAN2_Init();
   MX_UART5_Init();
   //MX_I2C3_Init();
+	Soft_I2C_Init();
   //MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 	//---------------Allocate Memory-----------------------
-	ID = 0;
-	AX = 0;
-	AY = 0;
-	AZ = 0;
-	GX = 0;
-	GY = 0;
-	GZ = 0;
+
 	
 	//---------------Enable Power Output-----------------------
 	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
@@ -130,33 +136,36 @@ int main(void)
 
 	//---------------initialize MPU6050-----------------------
 #ifdef MPU6050_DRIVER
-	MPU6050_Init();
-	while(MPU6050_GetID() != MPU6050_DEVICE_ID)
-	{
-		printf("Unable to verify MPU6050 ID: %d\n",ID);
-		HAL_Delay(100);
-		MPU6050_Init();
-	}
-	ID = MPU6050_GetID();
-	printf("MPU6050 Verified! ID: %x\n\r",ID);
+	while(!module_mpu_init()){HAL_Delay(10);};
+
+  unsigned char new_temp = 0;
+
+  unsigned long timestamp;
 #endif
   /* USER CODE END 2 */
 
-  /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
 		  HAL_GPIO_TogglePin(GPIOC, LED_Pin); //test led
-		  HAL_UART_Transmit(&huart5,"Uart5 Hello!\n",13,100); //test uart
+		  //HAL_UART_Transmit(&huart5,"Uart5 Hello!\n",13,100); //test uart
 		
 #ifdef MPU6050_DRIVER
-			MPU6050_GetData(&AX,&AY,&AZ,&GX,&GY,&GZ);
-		printf("MPU6050 Data: %x %d %d %d %d %d %d\n\r",ID,AX,AY,AZ,GX,GY,GZ);
+		timestamp = HAL_GetTick();	//读取当前时间
+		mpu_module_sampling();			//MPL采样数据
+		long data[9];
+		if (mpu_read_euler(data, &timestamp))		//读取MPL输出的欧拉角数据
+		{
+			pitch = 1.0f*data[0]/65536.f;					//将long类型的MPL输出数据转换成角度单位
+			roll  = 1.0f*data[1]/65536.f;
+			yaw 	= 1.0f*data[2]/65536.f;
+			printf("pitch:%lf\t\troll:%lf\t\tyaw:%lf\t\t\r\n", pitch, roll, yaw);//???????????????????
+		}
 #endif
 		
-      HAL_Delay(100);
+      HAL_Delay(5);
   }
   /* USER CODE END 3 */
 }
