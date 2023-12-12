@@ -9,22 +9,21 @@
 
 /* Function typedef -----------------------------------------------------------*/
 /** 
- *  @brief MPU模块初始化函数
- *  @return 无
+ *  @brief MPU Initialization
+ *  @return 1->success, 0->fail
  *  @attention 
  */
 int module_mpu_init(void);
 
 /** 
- *  @brief 从MPU的FIFO中读取数据并处理。
-           其中也包含了mpl库对温度变化的处理。
- *  @return 循环次数，用于优化
- *  @attention 应该至少为10ms执行一次
+ *  @brief Read and process FIFO from MP.
+ *  @return cycletime
+ *  @attention Process at least every 10ms
  */
 int mpu_module_sampling(void);
 	
 /** 
- *  @brief 包装器，包装inv_get_sensor_type_euler()函数
+ *  @brief inv_get_sensor_type_euler() interface
  *  @return 1 if data was updated. 
  *  @attention 
  */

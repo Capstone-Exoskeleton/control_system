@@ -153,19 +153,19 @@ int main(void)
 		  //HAL_UART_Transmit(&huart5,"Uart5 Hello!\n",13,100); //test uart
 		
 #ifdef MPU6050_DRIVER
-		timestamp = HAL_GetTick();	//读取当前时间
-		mpu_module_sampling();			//MPL采样数据
+		timestamp = HAL_GetTick();	//current time
+		mpu_module_sampling();			//MPL sample rate
 		long data[9];
-		if (mpu_read_euler(data, &timestamp))		//读取MPL输出的欧拉角数据
+		if (mpu_read_euler(data, &timestamp))	
 		{
-			pitch = 1.0f*data[0]/65536.f;					//将long类型的MPL输出数据转换成角度单位
+			pitch = 1.0f*data[0]/65536.f;					//Convert q16 format to degrees
 			roll  = 1.0f*data[1]/65536.f;
 			yaw 	= 1.0f*data[2]/65536.f;
-			printf("pitch:%lf\t\troll:%lf\t\tyaw:%lf\t\t\r\n", pitch, roll, yaw);//???????????????????
+			printf("%.2lf/%.2lf/%.2lf\n",roll, pitch, yaw);
 		}
 #endif
 		
-      HAL_Delay(5);
+      HAL_Delay(10);
   }
   /* USER CODE END 3 */
 }

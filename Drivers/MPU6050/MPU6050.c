@@ -74,9 +74,9 @@ unsigned char *mpl_key = (unsigned char*)"eMPL 5.1";
 /* Private functions ---------------------------------------------------------*/
 #ifdef MPU_DEBUG
 /** 
- *  @brief 从MPL库中读出规格数据
- *  @return 无
- *  @attention 通过UART返回
+ *  @brief MPL Debug Read Output
+ *  @return void
+ *  @attention UART print
  */
 static void read_from_mpl(void)
 {
@@ -137,7 +137,7 @@ static void read_from_mpl(void)
 #endif
 
 /** 
- *  @brief 包装器，包装inv_get_sensor_type_euler()函数
+ *  @brief inv_get_sensor_type_euler() interface
  *  @return 1 if data was updated. 
  *  @attention 
  */
@@ -148,8 +148,8 @@ int8_t mpu_read_euler(long *data, unsigned long *timestamp) {
 }
 
 /** 
- *  @brief MPU模块初始化函数
- *  @return 无
+ *  @brief MPU Initialization
+ *  @return 1->success, 0->fail
  *  @attention 
  */
 int module_mpu_init(void)
@@ -176,21 +176,21 @@ int module_mpu_init(void)
 		return result;
   }
   
-  /* Compute 6-axis quaternions. 计算6轴融合数据后的四元数 */
+  /* Compute 6-axis quaternions. */
   inv_enable_quaternion();
   inv_enable_9x_sensor_fusion();
 
   /* Update gyro biases when not in motion.
-   * 自动更新静止时的陀螺仪偏差。这三个函数为互斥函数。
+   * 
    */
   inv_enable_fast_nomot();
   /* inv_enable_motion_no_motion(); */
   /* inv_set_no_motion_time(1000); */
 
-  /* Update gyro biases when temperature changes. 温度变化后更新陀螺仪偏差*/
+  /* Update gyro biases when temperature changes.*/
   inv_enable_gyro_tc();
 
-  /* Allows use of the MPL APIs in read_from_mpl. 对数据输出提供支持*/
+  /* Allows use of the MPL APIs in read_from_mpl. */
   inv_enable_eMPL_outputs();
 
   result = inv_start_mpl();
@@ -237,10 +237,9 @@ int module_mpu_init(void)
 
 
 /** 
- *  @brief 从MPU的FIFO中读取数据并处理。
-           其中也包含了mpl库对温度变化的处理。
- *  @return 无
- *  @attention 应该至少为10ms执行一次
+ *  @brief Read and process FIFO from MP.
+ *  @return cycletime
+ *  @attention Process at least every 10ms
  */
 int mpu_module_sampling()
 {
@@ -252,13 +251,13 @@ int mpu_module_sampling()
   
   ticktime++;
   
-  /* 温度没有必要每次都读取。按照一定时间间隔读取 */
+  /* Read Temp every period */
   if (ticktime > hal.next_temp_tick) {
       hal.next_temp_tick = ticktime + TEMP_READ_TICK;
       new_temp = 1; //start task temp;
   }
   
-  /* 没有任何sensor打开时 */
+  /* No sensors */
   if (!hal.sensors) return 0;
   
   do {
@@ -270,7 +269,7 @@ int mpu_module_sampling()
     mpu_read_fifo(gyro, accel_short, &sensor_timestamp,
         &sensors, &more);
     if (sensors & INV_XYZ_GYRO) {
-        /* 将数据送入MPL. */
+        /* Send Data to MPL*/
         inv_build_gyro(gyro, sensor_timestamp);
         new_data = 1;
         if (new_temp) {
