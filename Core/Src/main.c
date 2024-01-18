@@ -6,13 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2023 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2024 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -20,14 +20,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "can.h"
-#include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
 
+#include "stdio.h"
+#include "MI_motor_dev.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "MPU6050.h"
-#include "stdio.h"
 
 /* USER CODE END Includes */
 
@@ -38,10 +37,16 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+
+/* USER CODE BEGIN PV */
 /* USER CODE BEGIN PM */
 /**
  ******************************************************************
@@ -58,34 +63,17 @@ int fputc(int ch, FILE *f)//printf
 	HAL_UART_Transmit(&huart5, (uint8_t *)&ch, 1,0xffff);
 	return (ch);
 }
-void mdelay(unsigned long num_ms)
-{
-	HAL_Delay(num_ms);
-}
-
-void get_tick_count(unsigned long *count)
-{
-	*count = HAL_GetTick();
-}
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE BEGIN PV */
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t ID;
-float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
+MI_Motor_t hmotor;
 /* USER CODE END 0 */
 
 /**
@@ -118,54 +106,29 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN2_Init();
   MX_UART5_Init();
-  //MX_I2C3_Init();
-	Soft_I2C_Init();
-  //MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-	//---------------Allocate Memory-----------------------
-
-	
-	//---------------Enable Power Output-----------------------
 	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
 	HAL_Delay(10);
-
-#ifdef MPU6050_DRIVER
-	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
+	
+	//HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
+	//HAL_Delay(10);
+	
+	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
 	HAL_Delay(10);
-#endif
-
-	//---------------initialize MPU6050-----------------------
-#ifdef MPU6050_DRIVER
-	while(!module_mpu_init()){HAL_Delay(10);};
-
-  unsigned char new_temp = 0;
-
-  unsigned long timestamp;
-#endif
+	
+	MI_motor_init(&hmotor,&hcan2); //initialize can for motor
+	MI_motor_get_ID(&hmotor);//get motor id
+	MI_motor_enable(&hmotor, 0);
   /* USER CODE END 2 */
 
+  /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
+		MI_motor_controlmode(&hmotor,4.0, 12, 10, 1, 1);
+		HAL_Delay(10);
     /* USER CODE BEGIN 3 */
-		  HAL_GPIO_TogglePin(GPIOC, LED_Pin); //test led
-		  //HAL_UART_Transmit(&huart5,"Uart5 Hello!\n",13,100); //test uart
-		
-#ifdef MPU6050_DRIVER
-		timestamp = HAL_GetTick();	//current time
-		mpu_module_sampling();			//MPL sample rate
-		long data[9];
-		if (mpu_read_euler(data, &timestamp))	
-		{
-			pitch = 1.0f*data[0]/65536.f;					//Convert q16 format to degrees
-			roll  = 1.0f*data[1]/65536.f;
-			yaw 	= 1.0f*data[2]/65536.f;
-			printf("%.2lf/%.2lf/%.2lf\n",roll, pitch, yaw);
-		}
-#endif
-		
-      HAL_Delay(10);
   }
   /* USER CODE END 3 */
 }
@@ -178,7 +141,6 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
   */
@@ -210,12 +172,6 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CLK48;
-  PeriphClkInitStruct.Clk48ClockSelection = RCC_CLK48CLKSOURCE_PLLQ;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
