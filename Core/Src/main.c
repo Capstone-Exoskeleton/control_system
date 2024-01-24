@@ -20,14 +20,14 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "can.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
-#include "stdio.h"
-#include "MI_motor_dev.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stdio.h"
+#include "cybergear.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,22 +47,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-/* USER CODE BEGIN PM */
-/**
- ******************************************************************
- * @brief   Use UART for printf debug
- * @param   [in]None
- * @retval  None
- * @author  Yuying
- * @version V1.0
- * @date    2023/11/18
- ******************************************************************
- */
-int fputc(int ch, FILE *f)//printf
-{
-	HAL_UART_Transmit(&huart5, (uint8_t *)&ch, 1,0xffff);
-	return (ch);
-}
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -73,7 +58,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-MI_Motor_t hmotor;
+
 /* USER CODE END 0 */
 
 /**
@@ -104,30 +89,46 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_CAN2_Init();
   MX_UART5_Init();
+  MX_TIM2_Init();
+  MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
+
+	// write LED
 	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
 	HAL_Delay(10);
 	
 	//HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
 	//HAL_Delay(10);
 	
+	//Enable CAN2 power
 	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
 	HAL_Delay(10);
 	
-	MI_motor_init(&hmotor,&hcan2); //initialize can for motor
-	MI_motor_get_ID(&hmotor);//get motor id
-	MI_motor_enable(&hmotor, 0);
+	//HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
+	//HAL_Delay(10);
+	
+	
+	//CAN start
+	MX_CAN2_Filter_Init();
+	HAL_TIM_Base_Start_IT(&htim2); // start timer for can2
+	
+  HAL_Delay(5000);  
+	HAL_Delay(5000);
+	init_cybergear(&mi_motor, 0x7F, Motion_mode);
+	//motor_controlmode(&mi_motor, 0, 1, 1, 1 , 1);
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		  //motor_controlmode(&mi_motor, 1, 1, 1, 1 , 1);  
+      HAL_Delay(10);
     /* USER CODE END WHILE */
-		MI_motor_controlmode(&hmotor,4.0, 12, 10, 1, 1);
-		HAL_Delay(10);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -154,11 +155,17 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 6;
-  RCC_OscInitStruct.PLL.PLLN = 168;
+  RCC_OscInitStruct.PLL.PLLN = 180;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Activate the Over-Drive mode
+  */
+  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }

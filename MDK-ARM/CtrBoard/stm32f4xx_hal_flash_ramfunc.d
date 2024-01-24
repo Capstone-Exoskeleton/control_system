@@ -28,4 +28,6 @@ ctrboard\stm32f4xx_hal_flash_ramfunc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm3
 ctrboard\stm32f4xx_hal_flash_ramfunc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h
 ctrboard\stm32f4xx_hal_flash_ramfunc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 ctrboard\stm32f4xx_hal_flash_ramfunc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
+ctrboard\stm32f4xx_hal_flash_ramfunc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
+ctrboard\stm32f4xx_hal_flash_ramfunc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 ctrboard\stm32f4xx_hal_flash_ramfunc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
