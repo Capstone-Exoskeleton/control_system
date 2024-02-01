@@ -30,4 +30,6 @@ ctrboard\stm32f4xx_hal_dma_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_h
 ctrboard\stm32f4xx_hal_dma_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
 ctrboard\stm32f4xx_hal_dma_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 ctrboard\stm32f4xx_hal_dma_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
-ctrboard\stm32f4xx_hal_dma_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
+ctrboard\stm32f4xx_hal_dma_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h
+ctrboard\stm32f4xx_hal_dma_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h
+ctrboard\stm32f4xx_hal_dma_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h

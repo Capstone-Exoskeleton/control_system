@@ -69,7 +69,9 @@ void Error_Handler(void);
 #define USER_KEY_Pin GPIO_PIN_15
 #define USER_KEY_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
-
+#define HX711_GPIO_Port GPIOC
+#define HX711_CLK_Pin GPIO_PIN_7
+#define HX711_DATA_Pin GPIO_PIN_6
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

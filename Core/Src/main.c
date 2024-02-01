@@ -21,13 +21,14 @@
 #include "main.h"
 #include "can.h"
 #include "tim.h"
-#include "usart.h"
+#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "cybergear.h"
+#include "hx711.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,7 +59,13 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+/*
+int fputc(int ch, FILE *f)//printf
+{
+	HAL_UART_Transmit(&huart5, (uint8_t *)&ch, 1,0xffff);
+	return (ch);
+}
+*/
 /* USER CODE END 0 */
 
 /**
@@ -89,24 +96,29 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_UART5_Init();
   MX_TIM2_Init();
   MX_CAN2_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
 	// write LED
 	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
 	HAL_Delay(10);
 	
-	//HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
-	//HAL_Delay(10);
+	//enable hx711
+#ifdef HX711
+	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
+	HAL_Delay(10);
+	hx711_init(&loadcell, GPIOC, HX711_CLK_Pin, GPIOC, HX711_DATA_Pin);
+	hx711_coef_set(&loadcell, -438.6); // read afer calibration
+  hx711_tare(&loadcell, 30);
+#endif
+	
 	
 	//Enable CAN2 power
 	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
 	HAL_Delay(10);
-	
-	//HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
-	//HAL_Delay(10);
+
 	
 	
 	//CAN start
@@ -123,10 +135,24 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	char str[9];
   while (1)
   {
-		  //motor_controlmode(&mi_motor, 1, 1, 1, 1 , 1);  
-      HAL_Delay(10);
+			
+		//motor_controlmode(&mi_motor, 1, 1, 1, 1 , 1);
+		
+		//Debug print format
+		sprintf(str,"Debug %d\r\n",1);
+		CDC_Transmit_FS(str,15);
+		
+#ifdef HX711
+		float weight;
+		HAL_Delay(10);
+		weight = hx711_weight(&loadcell, 10);
+		//printf("w: %.2f\r\n",weight);
+		sprintf(str,"w: %.2f\r\n",weight);
+		CDC_Transmit_FS(str,15);
+#endif
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -142,11 +168,12 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -155,17 +182,11 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 6;
-  RCC_OscInitStruct.PLL.PLLN = 180;
+  RCC_OscInitStruct.PLL.PLLN = 120;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 7;
+  RCC_OscInitStruct.PLL.PLLQ = 5;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Activate the Over-Drive mode
-  */
-  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }
@@ -178,7 +199,13 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CLK48;
+  PeriphClkInitStruct.Clk48ClockSelection = RCC_CLK48CLKSOURCE_PLLQ;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
