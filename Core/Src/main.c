@@ -6,13 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2023 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2024 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -20,15 +20,15 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "can.h"
-#include "i2c.h"
-#include "usart.h"
+#include "tim.h"
+#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "MPU6050.h"
 #include "stdio.h"
-
+#include "cybergear.h"
+#include "hx711.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -38,35 +38,11 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-/**
- ******************************************************************
- * @brief   Use UART for printf debug
- * @param   [in]None
- * @retval  None
- * @author  Yuying
- * @version V1.0
- * @date    2023/11/18
- ******************************************************************
- */
-int fputc(int ch, FILE *f)//printf
-{
-	HAL_UART_Transmit(&huart5, (uint8_t *)&ch, 1,0xffff);
-	return (ch);
-}
-void mdelay(unsigned long num_ms)
-{
-	HAL_Delay(num_ms);
-}
 
-void get_tick_count(unsigned long *count)
-{
-	*count = HAL_GetTick();
-}
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -77,15 +53,19 @@ void get_tick_count(unsigned long *count)
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t ID;
-float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
+/*
+int fputc(int ch, FILE *f)//printf
+{
+	HAL_UART_Transmit(&huart5, (uint8_t *)&ch, 1,0xffff);
+	return (ch);
+}
+*/
 /* USER CODE END 0 */
 
 /**
@@ -116,56 +96,66 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_TIM2_Init();
   MX_CAN2_Init();
-  MX_UART5_Init();
-  //MX_I2C3_Init();
-	Soft_I2C_Init();
-  //MX_USB_DEVICE_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-	//---------------Allocate Memory-----------------------
 
-	
-	//---------------Enable Power Output-----------------------
+	// write LED
 	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
 	HAL_Delay(10);
-
-#ifdef MPU6050_DRIVER
+	
+	//enable hx711
+#ifdef HX711
 	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
 	HAL_Delay(10);
+	hx711_init(&loadcell, GPIOC, HX711_CLK_Pin, GPIOC, HX711_DATA_Pin);
+	hx711_coef_set(&loadcell, -438.6); // read afer calibration
+  hx711_tare(&loadcell, 30);
 #endif
+	
+	
+	//Enable CAN2 power
+	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
+	HAL_Delay(10);
 
-	//---------------initialize MPU6050-----------------------
-#ifdef MPU6050_DRIVER
-	while(!module_mpu_init()){HAL_Delay(10);};
+	
+	
+	//CAN start
+	MX_CAN2_Filter_Init();
+	HAL_TIM_Base_Start_IT(&htim2); // start timer for can2
+	
+  HAL_Delay(5000);  
+	HAL_Delay(5000);
+	init_cybergear(&mi_motor, 0x7F, Motion_mode);
+	//motor_controlmode(&mi_motor, 0, 1, 1, 1 , 1);
 
-  unsigned char new_temp = 0;
 
-  unsigned long timestamp;
-#endif
   /* USER CODE END 2 */
 
+  /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	char str[9];
   while (1)
   {
-    /* USER CODE END WHILE */
-    /* USER CODE BEGIN 3 */
-		  HAL_GPIO_TogglePin(GPIOC, LED_Pin); //test led
-		  //HAL_UART_Transmit(&huart5,"Uart5 Hello!\n",13,100); //test uart
+			
+		//motor_controlmode(&mi_motor, 1, 1, 1, 1 , 1);
 		
-#ifdef MPU6050_DRIVER
-		timestamp = HAL_GetTick();	//current time
-		mpu_module_sampling();			//MPL sample rate
-		long data[9];
-		if (mpu_read_euler(data, &timestamp))	
-		{
-			pitch = 1.0f*data[0]/65536.f;					//Convert q16 format to degrees
-			roll  = 1.0f*data[1]/65536.f;
-			yaw 	= 1.0f*data[2]/65536.f;
-			printf("%.2lf/%.2lf/%.2lf\n",roll, pitch, yaw);
-		}
+		//Debug print format
+		sprintf(str,"Debug %d\r\n",1);
+		CDC_Transmit_FS(str,15);
+		
+#ifdef HX711
+		float weight;
+		HAL_Delay(10);
+		weight = hx711_weight(&loadcell, 10);
+		//printf("w: %.2f\r\n",weight);
+		sprintf(str,"w: %.2f\r\n",weight);
+		CDC_Transmit_FS(str,15);
 #endif
-		
-      HAL_Delay(10);
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
@@ -183,7 +173,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -192,9 +182,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 6;
-  RCC_OscInitStruct.PLL.PLLN = 168;
+  RCC_OscInitStruct.PLL.PLLN = 120;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 7;
+  RCC_OscInitStruct.PLL.PLLQ = 5;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -209,7 +199,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }

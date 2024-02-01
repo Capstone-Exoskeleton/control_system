@@ -38,14 +38,6 @@ Control System/
    3. UART5
       1. PC12 PD2: serial debug output
 
-### Posture Simulation
-Using **Processing** to open ```Posture_Simulation.pde```. Change the port to ```COMn```. Run and see MPU6050 measurement results. 
-Serial Input Format: 
-```
-roll_float/pitch_float/yaw_float\n
-```
-
-
 ## Development Setup & Tutorial (Do it at the beginning)
 ### STM32 Setup
 #### Download
