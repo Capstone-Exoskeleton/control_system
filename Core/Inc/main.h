@@ -72,6 +72,10 @@ void Error_Handler(void);
 #define HX711_GPIO_Port GPIOC
 #define HX711_CLK_Pin GPIO_PIN_7
 #define HX711_DATA_Pin GPIO_PIN_6
+
+#define I2C1_SCL_Pin GPIO_PIN_9
+#define I2C1_SDA_Pin GPIO_PIN_8
+#define I2C1_GPIO_Port GPIOC
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

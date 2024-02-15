@@ -28,7 +28,15 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "cybergear.h"
+
+#ifdef MPU6050_DRIVER
+#include "i2c.h"
+#include "MPU6050.h"
+#endif
+
+#ifdef HX711
 #include "hx711.h"
+#endif
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,6 +74,7 @@ int fputc(int ch, FILE *f)//printf
 	return (ch);
 }
 */
+
 /* USER CODE END 0 */
 
 /**
@@ -75,7 +84,15 @@ int fputc(int ch, FILE *f)//printf
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	char str[30];
+	
+	#ifdef MPU6050_DRIVER
+	uint8_t ID;
+	float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
+	const uint16_t minTorque  = 10;
+	const uint16_t maxTorque  = 10000;
+	uint16_t outTorque = 0;
+	#endif
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -105,13 +122,24 @@ int main(void)
 	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
 	HAL_Delay(10);
 	
-	//enable hx711
-#ifdef HX711
 	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
 	HAL_Delay(10);
+	
+#ifdef HX711
+	//enable hx711
 	hx711_init(&loadcell, GPIOC, HX711_CLK_Pin, GPIOC, HX711_DATA_Pin);
 	hx711_coef_set(&loadcell, -438.6); // read afer calibration
   hx711_tare(&loadcell, 30);
+#endif
+
+	
+#ifdef MPU6050_DRIVER
+	//---------------initialize MPU6050-----------------------
+	Soft_I2C_Init();
+	
+	while(!module_mpu_init()){HAL_Delay(20);};
+
+  unsigned long timestamp;
 #endif
 	
 	
@@ -125,8 +153,8 @@ int main(void)
 	MX_CAN2_Filter_Init();
 	HAL_TIM_Base_Start_IT(&htim2); // start timer for can2
 	
-  HAL_Delay(5000);  
-	HAL_Delay(5000);
+  //HAL_Delay(5000);  
+	//HAL_Delay(5000);
 	init_cybergear(&mi_motor, 0x7F, Motion_mode);
 	//motor_controlmode(&mi_motor, 0, 1, 1, 1 , 1);
 
@@ -135,16 +163,17 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	char str[9];
+	
   while (1)
   {
 			
 		//motor_controlmode(&mi_motor, 1, 1, 1, 1 , 1);
-		
+
 		//Debug print format
 		sprintf(str,"Debug %d\r\n",1);
 		CDC_Transmit_FS(str,15);
-		
+		HAL_Delay(10);
+
 #ifdef HX711
 		float weight;
 		HAL_Delay(10);
@@ -152,6 +181,21 @@ int main(void)
 		//printf("w: %.2f\r\n",weight);
 		sprintf(str,"w: %.2f\r\n",weight);
 		CDC_Transmit_FS(str,15);
+#endif
+		
+#ifdef MPU6050_DRIVER
+		timestamp = HAL_GetTick();	//current time
+		mpu_module_sampling();			//MPL sample rate
+		long data[9];
+		if (mpu_read_euler(data, &timestamp))	
+		{
+			pitch = 1.0f*data[0]/65536.f;					//Convert q16 format to degrees
+			roll  = 1.0f*data[1]/65536.f;
+			yaw 	= 1.0f*data[2]/65536.f;
+			outTorque =  maxTorque - pitch; //TODO: using only pitch as measurement
+			sprintf(str,"%.2lf/%.2lf/%.2lf\r\n",roll, pitch, yaw);
+			CDC_Transmit_FS(str,30);
+		}
 #endif
     /* USER CODE END WHILE */
 

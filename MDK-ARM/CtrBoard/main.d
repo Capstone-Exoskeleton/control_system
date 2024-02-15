@@ -44,4 +44,3 @@ ctrboard\main.o: D:\app\keil\ARM\ARMCC\Bin\..\include\stdlib.h
 ctrboard\main.o: D:\app\keil\ARM\ARMCC\Bin\..\include\string.h
 ctrboard\main.o: ../Core/Inc/gpio.h
 ctrboard\main.o: ../Core/Inc/cybergear.h
-ctrboard\main.o: ../Core/Inc/hx711.h

@@ -22,27 +22,217 @@ Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
 D:\personal-project\roboeg\control_system\MDK-ARM\CtrBoard.uvprojx
-Project File Date:  01/31/2024
+Project File Date:  02/15/2024
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\app\keil\ARM\ARMCC\Bin'
-Build target 'CtrBoard'
+Rebuild target 'CtrBoard'
+assembling startup_stm32f446xx.s...
+compiling stm32f4xx_it.c...
+compiling can.c...
+compiling tim.c...
+compiling i2c.c...
+..\Core\Src\i2c.c(465): warning:  #188-D: enumerated type mixed with another type
+      return 0;
+..\Core\Src\i2c.c(520): warning:  #188-D: enumerated type mixed with another type
+      return 0;
+..\Core\Src\i2c.c: 2 warnings, 0 errors
+compiling gpio.c...
+compiling stm32f4xx_hal_msp.c...
+compiling cybergear.c...
+compiling stm32f4xx_hal_pcd_ex.c...
 compiling main.c...
+../Core/Src/main.c(122): warning:  #188-D: enumerated type mixed with another type
+  	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
+../Core/Src/main.c(125): warning:  #188-D: enumerated type mixed with another type
+  	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
+../Core/Src/main.c(147): warning:  #188-D: enumerated type mixed with another type
+  	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
+../Core/Src/main.c(174): warning:  #223-D: function "CDC_Transmit_FS" declared implicitly
+  		CDC_Transmit_FS(str,15);
+../Core/Src/main.c: 4 warnings, 0 errors
+compiling hx711.c...
 ../Core/Inc/hx711.h(64): warning:  #1-D: last line of file ends without a newline
   #endif 
-../Core/Src/main.c(105): warning:  #188-D: enumerated type mixed with another type
-  	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
-../Core/Src/main.c(109): warning:  #188-D: enumerated type mixed with another type
-  	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
-../Core/Src/main.c(117): warning:  #188-D: enumerated type mixed with another type
-  	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
-../Core/Src/main.c(147): warning:  #223-D: function "CDC_Transmit_FS" declared implicitly
-  			CDC_Transmit_FS(str,15);
-../Core/Src/main.c: 5 warnings, 0 errors
+../Core/Inc/hx711Config.h(6): warning:  #1-D: last line of file ends without a newline
+  #endif 
+..\Core\Src\hx711.c(168): warning:  #1-D: last line of file ends without a newline
+  //#############################################################################################
+..\Core\Src\hx711.c: 3 warnings, 0 errors
+compiling stm32f4xx_hal_pcd.c...
+compiling stm32f4xx_hal_flash_ex.c...
+compiling stm32f4xx_hal_flash_ramfunc.c...
+compiling stm32f4xx_ll_usb.c...
+compiling stm32f4xx_hal_gpio.c...
+compiling stm32f4xx_hal_dma.c...
+compiling stm32f4xx_hal_pwr.c...
+compiling stm32f4xx_hal_pwr_ex.c...
+compiling stm32f4xx_hal_rcc.c...
+compiling stm32f4xx_hal_flash.c...
+compiling stm32f4xx_hal_rcc_ex.c...
+compiling stm32f4xx_hal_dma_ex.c...
+compiling stm32f4xx_hal_tim_ex.c...
+compiling stm32f4xx_hal.c...
+compiling stm32f4xx_hal_can.c...
+compiling stm32f4xx_hal_exti.c...
+compiling usbd_conf.c...
+compiling system_stm32f4xx.c...
+compiling stm32f4xx_hal_cortex.c...
+compiling usbd_desc.c...
+compiling usbd_cdc_if.c...
+compiling usb_device.c...
+compiling eMPL_outputs.c...
+..\Drivers\MPU6050\eMPL-hal\eMPL_outputs.h(44): warning:  #1-D: last line of file ends without a newline
+   */
+../Drivers/MPU6050/mllite/ml_math_func.h(137): warning:  #1-D: last line of file ends without a newline
+  		
+../Drivers/MPU6050/mllite/start_manager.h(27): warning:  #1-D: last line of file ends without a newline
+  #endif  // INV_START_MANAGER_H__
+../Drivers/MPU6050/mllite/data_builder.h(259): warning:  #1-D: last line of file ends without a newline
+  #endif  /* INV_DATA_BUILDER_H__ */
+../Drivers/MPU6050/mllite/results_holder.h(81): warning:  #1-D: last line of file ends without a newline
+  #endif // INV_RESULTS_HOLDER_H__
+..\Drivers\MPU6050\eMPL-hal\eMPL_outputs.c(322): warning:  #1-D: last line of file ends without a newline
+   */
+..\Drivers\MPU6050\eMPL-hal\eMPL_outputs.c: 6 warnings, 0 errors
+compiling stm32f4xx_hal_tim.c...
+compiling data_builder.c...
+..\Drivers\MPU6050\mllite\ml_math_func.h(137): warning:  #1-D: last line of file ends without a newline
+  		
+..\Drivers\MPU6050\mllite\data_builder.h(259): warning:  #1-D: last line of file ends without a newline
+  #endif  /* INV_DATA_BUILDER_H__ */
+..\Drivers\MPU6050\mllite\storage_manager.h(30): warning:  #1-D: last line of file ends without a newline
+  #endif  /* INV_STORAGE_MANAGER_H__ */
+..\Drivers\MPU6050\mllite\results_holder.h(81): warning:  #1-D: last line of file ends without a newline
+  #endif // INV_RESULTS_HOLDER_H__
+..\Drivers\MPU6050\mllite\data_builder.c(1263): warning:  #1-D: last line of file ends without a newline
+   */
+..\Drivers\MPU6050\mllite\data_builder.c: 5 warnings, 0 errors
+compiling message_layer.c...
+compiling hal_outputs.c...
+..\Drivers\MPU6050\mllite\hal_outputs.h(45): warning:  #1-D: last line of file ends without a newline
+  #endif                          // INV_HAL_OUTPUTS_H__
+..\Drivers\MPU6050\mllite\ml_math_func.h(137): warning:  #1-D: last line of file ends without a newline
+  		
+..\Drivers\MPU6050\mllite\start_manager.h(27): warning:  #1-D: last line of file ends without a newline
+  #endif  // INV_START_MANAGER_H__
+..\Drivers\MPU6050\mllite\data_builder.h(259): warning:  #1-D: last line of file ends without a newline
+  #endif  /* INV_DATA_BUILDER_H__ */
+..\Drivers\MPU6050\mllite\results_holder.h(81): warning:  #1-D: last line of file ends without a newline
+  #endif // INV_RESULTS_HOLDER_H__
+..\Drivers\MPU6050\mllite\hal_outputs.c: 5 warnings, 0 errors
+compiling mlmath.c...
+compiling ml_math_func.c...
+..\Drivers\MPU6050\mllite\ml_math_func.h(137): warning:  #1-D: last line of file ends without a newline
+  		
+..\Drivers\MPU6050\mllite\ml_math_func.c(568): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if (ang > M_PI)
+..\Drivers\MPU6050\mllite\ml_math_func.c(588): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if (d > M_PI)
+..\Drivers\MPU6050\mllite\ml_math_func.c: 3 warnings, 0 errors
+compiling mpl.c...
+..\Drivers\MPU6050\mllite\storage_manager.h(30): warning:  #1-D: last line of file ends without a newline
+  #endif  /* INV_STORAGE_MANAGER_H__ */
+..\Drivers\MPU6050\mllite\mpl.h(24): warning:  #1-D: last line of file ends without a newline
+  #endif // INV_MPL_H__
+..\Drivers\MPU6050\mllite\start_manager.h(27): warning:  #1-D: last line of file ends without a newline
+  #endif  // INV_START_MANAGER_H__
+..\Drivers\MPU6050\mllite\data_builder.h(259): warning:  #1-D: last line of file ends without a newline
+  #endif  /* INV_DATA_BUILDER_H__ */
+..\Drivers\MPU6050\mllite\results_holder.h(81): warning:  #1-D: last line of file ends without a newline
+  #endif // INV_RESULTS_HOLDER_H__
+..\Drivers\MPU6050\mllite\mpl.c(72): warning:  #1-D: last line of file ends without a newline
+   */
+..\Drivers\MPU6050\mllite\mpl.c: 6 warnings, 0 errors
+compiling results_holder.c...
+..\Drivers\MPU6050\mllite\results_holder.h(81): warning:  #1-D: last line of file ends without a newline
+  #endif // INV_RESULTS_HOLDER_H__
+..\Drivers\MPU6050\mllite\ml_math_func.h(137): warning:  #1-D: last line of file ends without a newline
+  		
+..\Drivers\MPU6050\mllite\start_manager.h(27): warning:  #1-D: last line of file ends without a newline
+  #endif  // INV_START_MANAGER_H__
+..\Drivers\MPU6050\mllite\data_builder.h(259): warning:  #1-D: last line of file ends without a newline
+  #endif  /* INV_DATA_BUILDER_H__ */
+..\Drivers\MPU6050\mllite\results_holder.c(522): warning:  #1-D: last line of file ends without a newline
+   */
+..\Drivers\MPU6050\mllite\results_holder.c: 5 warnings, 0 errors
+compiling start_manager.c...
+..\Drivers\MPU6050\mllite\start_manager.h(27): warning:  #1-D: last line of file ends without a newline
+  #endif  // INV_START_MANAGER_H__
+..\Drivers\MPU6050\mllite\start_manager.c(105): warning:  #1-D: last line of file ends without a newline
+   */
+..\Drivers\MPU6050\mllite\start_manager.c: 2 warnings, 0 errors
+compiling storage_manager.c...
+..\Drivers\MPU6050\mllite\storage_manager.h(30): warning:  #1-D: last line of file ends without a newline
+  #endif  /* INV_STORAGE_MANAGER_H__ */
+..\Drivers\MPU6050\mllite\ml_math_func.h(137): warning:  #1-D: last line of file ends without a newline
+  		
+..\Drivers\MPU6050\mllite\storage_manager.c(204): warning:  #1-D: last line of file ends without a newline
+   */
+..\Drivers\MPU6050\mllite\storage_manager.c: 3 warnings, 0 errors
+compiling inv_i2c.c...
+compiling usbd_core.c...
+compiling usbd_cdc.c...
+compiling log_stm32.c...
+..\Drivers\MPU6050\driver\stm32L\log_stm32.c(58): warning:  #177-D: variable "i"  was declared but never referenced
+      int length, ii, i;
+..\Drivers\MPU6050\driver\stm32L\log_stm32.c: 1 warning, 0 errors
+compiling usbd_ctlreq.c...
+compiling usbd_ioreq.c...
+compiling MPU6050.c...
+../Drivers/MPU6050/mllite/data_builder.h(259): warning:  #1-D: last line of file ends without a newline
+  #endif  /* INV_DATA_BUILDER_H__ */
+../Drivers/MPU6050/mllite/hal_outputs.h(45): warning:  #1-D: last line of file ends without a newline
+  #endif                          // INV_HAL_OUTPUTS_H__
+../Drivers/MPU6050/mllite/ml_math_func.h(137): warning:  #1-D: last line of file ends without a newline
+  		
+../Drivers/MPU6050/mllite/mpl.h(24): warning:  #1-D: last line of file ends without a newline
+  #endif // INV_MPL_H__
+../Drivers/MPU6050/mllite/results_holder.h(81): warning:  #1-D: last line of file ends without a newline
+  #endif // INV_RESULTS_HOLDER_H__
+../Drivers/MPU6050/mllite/start_manager.h(27): warning:  #1-D: last line of file ends without a newline
+  #endif  // INV_START_MANAGER_H__
+../Drivers/MPU6050/mllite/storage_manager.h(30): warning:  #1-D: last line of file ends without a newline
+  #endif  /* INV_STORAGE_MANAGER_H__ */
+../Drivers/MPU6050/mllite/invensense.h(28): warning:  #1-D: last line of file ends without a newline
+  //#include "..\HAL\include\mlos.h"
+../Drivers/MPU6050/mpl/fusion_9axis.h(38): warning:  #1-D: last line of file ends without a newline
+  #endif // MLDMP_FUSION9AXIS_H__
+../Drivers/MPU6050/mpl/heading_from_gyro.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif  /* _HEADING_FROM_GYRO_H_ */
+../Drivers/MPU6050/mpl/mag_disturb.h(37): warning:  #1-D: last line of file ends without a newline
+  #endif // MLDMP_MAGDISTURB_H__
+../Drivers/MPU6050/mpl/motion_no_motion.h(28): warning:  #1-D: last line of file ends without a newline
+  #endif // INV_MOTION_NO_MOTION_H__
+../Drivers/MPU6050/mpl/no_gyro_fusion.h(34): warning:  #1-D: last line of file ends without a newline
+  #endif // MLDMP_NOGYROFUSION_H__
+../Drivers/MPU6050/mpl/quaternion_supervisor.h(27): warning:  #1-D: last line of file ends without a newline
+  #endif // INV_QUATERNION_SUPERVISOR_H__
+../Drivers/MPU6050/mpl/invensense_adv.h(27): warning:  #1-D: last line of file ends without a newline
+  #include "mag_disturb.h"
+../Drivers/MPU6050/eMPL-hal/eMPL_outputs.h(44): warning:  #1-D: last line of file ends without a newline
+   */
+../Drivers/MPU6050/driver/include/mpu.h(380): warning:  #1-D: last line of file ends without a newline
+  #endif				/* __MPU_H_ */
+../Drivers/MPU6050/driver/eMPL/inv_mpu.h(133): warning:  #1295-D: Deprecated declaration mpu_get_who_am_i - give arg types
+  unsigned char mpu_get_who_am_i();
+..\Drivers\MPU6050\MPU6050.c: 18 warnings, 0 errors
+compiling inv_mpu_dmp_motion_driver.c...
+..\Drivers\MPU6050\driver\eMPL\inv_mpu.h(133): warning:  #1295-D: Deprecated declaration mpu_get_who_am_i - give arg types
+  unsigned char mpu_get_who_am_i();
+..\Drivers\MPU6050\driver\eMPL\inv_mpu_dmp_motion_driver.c(634): warning:  #174-D: expression has no effect
+      __no_operation();
+..\Drivers\MPU6050\driver\eMPL\inv_mpu_dmp_motion_driver.c: 2 warnings, 0 errors
+compiling inv_mpu.c...
+..\Drivers\MPU6050\driver\eMPL\inv_mpu.h(133): warning:  #1295-D: Deprecated declaration mpu_get_who_am_i - give arg types
+  unsigned char mpu_get_who_am_i();
+..\Drivers\MPU6050\driver\eMPL\inv_mpu.c(3285): warning:  #68-D: integer conversion resulted in a change of sign
+  			return -1;
+..\Drivers\MPU6050\driver\eMPL\inv_mpu.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=21788 RO-data=500 RW-data=436 ZI-data=9644  
+Program Size: Code=21104 RO-data=500 RW-data=436 ZI-data=9620  
 FromELF: creating hex file...
-"CtrBoard\CtrBoard.axf" - 0 Error(s), 5 Warning(s).
+"CtrBoard\CtrBoard.axf" - 0 Error(s), 67 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -66,7 +256,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.4.0
       Include file:  CMSIS\Core\Include\tz_context.h
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:52
 </pre>
 </body>
 </html>
