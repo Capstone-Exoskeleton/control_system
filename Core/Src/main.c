@@ -98,71 +98,169 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+		state nextstate = IDLE;
+				linked_state(&nextstate);
+				HAL_Init();
+
+				/* USER CODE BEGIN Init */
+
+				/* USER CODE END Init */
+
+				/* Configure the system clock */
+				SystemClock_Config();
+
+				/* USER CODE BEGIN SysInit */
+
+				/* USER CODE END SysInit */
+
+				/* Initialize all configured peripherals */
+				MX_GPIO_Init();
+				MX_TIM2_Init();
+				MX_CAN2_Init();
+				MX_USB_DEVICE_Init();
+				/* USER CODE BEGIN 2 */
+
+				// write LED
+				HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
+				HAL_Delay(10);
+				
+				HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
+				HAL_Delay(10);
+				
+			#ifdef HX711
+				//enable hx711
+				hx711_init(&loadcell, GPIOC, HX711_CLK_Pin, GPIOC, HX711_DATA_Pin);
+				hx711_coef_set(&loadcell, -438.6); // read afer calibration
+				hx711_tare(&loadcell, 30);
+			#endif
+
+				
+			#ifdef MPU6050_DRIVER
+				//---------------initialize MPU6050-----------------------
+				Soft_I2C_Init();
+				
+				while(!module_mpu_init()){HAL_Delay(20);};
+
+				unsigned long timestamp;
+			#endif
+				
+				
+				//Enable CAN2 power
+				HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
+				HAL_Delay(10);
+
+				
+				
+				//CAN start
+				MX_CAN2_Filter_Init();
+				HAL_TIM_Base_Start_IT(&htim2); // start timer for can2
+				
+				//HAL_Delay(5000);  
+				//HAL_Delay(5000);
+
+
+
+
+	while(1){
+	HAL_Delay(10);
+	switch (nextstate){
+		case IDLE:
+
+
+			break;
+		case Moter_init:
+			
+			init_cybergear(&mi_motor, 0x7F, Motion_mode);
+		
+			nextstate = Read_gyro;
+		
+			break;
+		case Read_gyro:
+			
+			nextstate=Moter_output;
+			break;
+		case Moter_output:
+			
+		
+		
+			nextstate = Read_gyro;
+			break;
+			
+		case STOP:
+			
+			
+			break;
+		default: 
+			break;
+		
+	}
+}
+	
+  //HAL_Init();
 
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+  //SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_TIM2_Init();
-  MX_CAN2_Init();
-  MX_USB_DEVICE_Init();
+  //MX_GPIO_Init();
+  //MX_TIM2_Init();
+  //MX_CAN2_Init();
+  //MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
 	// write LED
-	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
-	HAL_Delay(10);
+	//HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
+	//HAL_Delay(10);
 	
-	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
-	HAL_Delay(10);
+	//HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
+	//HAL_Delay(10);
 	
-#ifdef HX711
-	//enable hx711
-	hx711_init(&loadcell, GPIOC, HX711_CLK_Pin, GPIOC, HX711_DATA_Pin);
-	hx711_coef_set(&loadcell, -438.6); // read afer calibration
-  hx711_tare(&loadcell, 30);
-#endif
+//#ifdef HX711
+//	//enable hx711
+//	hx711_init(&loadcell, GPIOC, HX711_CLK_Pin, GPIOC, HX711_DATA_Pin);
+//	hx711_coef_set(&loadcell, -438.6); // read afer calibration
+//  hx711_tare(&loadcell, 30);
+//#endif
 
 	
-#ifdef MPU6050_DRIVER
-	//---------------initialize MPU6050-----------------------
-	Soft_I2C_Init();
-	
-	while(!module_mpu_init()){HAL_Delay(20);};
+//#ifdef MPU6050_DRIVER
+//	//---------------initialize MPU6050-----------------------
+//	Soft_I2C_Init();
+//	
+//	while(!module_mpu_init()){HAL_Delay(20);};
 
-  unsigned long timestamp;
-#endif
-	
-	
-	//Enable CAN2 power
-	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
-	HAL_Delay(10);
+//  unsigned long timestamp;
+//#endif
+//	
+//	
+//	//Enable CAN2 power
+//	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
+//	HAL_Delay(10);
 
-	
-	
-	//CAN start
-	MX_CAN2_Filter_Init();
-	HAL_TIM_Base_Start_IT(&htim2); // start timer for can2
-	
-  //HAL_Delay(5000);  
-	//HAL_Delay(5000);
-	init_cybergear(&mi_motor, 0x7F, Motion_mode);
-	//motor_controlmode(&mi_motor, 0, 1, 1, 1 , 1);
+//	
+//	
+//	//CAN start
+//	MX_CAN2_Filter_Init();
+//	HAL_TIM_Base_Start_IT(&htim2); // start timer for can2
+//	
+//  //HAL_Delay(5000);  
+//	//HAL_Delay(5000);
+//	init_cybergear(&mi_motor, 0x7F, Motion_mode);
+//	//motor_controlmode(&mi_motor, 0, 1, 1, 1 , 1);
 
 
-  /* USER CODE END 2 */
+//  /* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+//  /* Infinite loop */
+//  /* USER CODE BEGIN WHILE */
 	
   while (1)
   {
@@ -171,7 +269,7 @@ int main(void)
 
 		//Debug print format
 		sprintf(str,"Debug %d\r\n",1);
-		CDC_Transmit_FS(str,15);
+		//CDC_Transmit_FS(str,15);
 		HAL_Delay(10);
 
 #ifdef HX711
