@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "cybergear.h"
+#include "math.h"
 
 #ifdef MPU6050_DRIVER
 #include "i2c.h"
@@ -85,12 +86,14 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	char str[30];
+	const float maxTorque = 6, minTorque = 0.5;
 	float outTorque = 0;
+	float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
 	
 	#ifdef MPU6050_DRIVER
 	uint8_t ID;
-	float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
 	long data[9];
+	unsigned long timestamp;
 	#endif
   /* USER CODE END 1 */
 
@@ -136,10 +139,9 @@ int main(void)
 #ifdef MPU6050_DRIVER
 	//---------------initialize MPU6050-----------------------
 	Soft_I2C_Init();
+	HAL_Delay(10);
 	
 	while(!module_mpu_init()){HAL_Delay(20);};
-
-	unsigned long timestamp;
 #endif
 	
 	
@@ -183,23 +185,39 @@ int main(void)
 					pitch = 1.0f*data[0]/65536.f;					//Convert q16 format to degrees
 					roll  = 1.0f*data[1]/65536.f;
 					yaw 	= 1.0f*data[2]/65536.f;
-					outTorque =  pitch / 90 * 4; //TODO: using only pitch as measurement
-					sprintf(str,"%.2lf/%.2lf/%.2lf\r\n",roll, pitch, yaw);
-					CDC_Transmit_FS(str,30);
+					//sprintf(str,"%.2lf/%.2lf/%.2lf\r\n",roll, pitch, yaw);
+					//CDC_Transmit_FS(str,30);
 				}
 #endif
+				//angle to torque calculation
+				//case 1: -45 < pitch < 0, output min torque
+				if (pitch < 0 && pitch > -45 ){
+					outTorque = minTorque;
+				}
+				//case 2: 0 < pitch < 150, output sin of angle
+				else if (pitch >= 0 && pitch <= 150){
+					outTorque = (maxTorque-minTorque) * sin(pitch) + minTorque;
+				}
+				//case 3: unsafe angle zone, jump to emergency stop
+				else {
+					nextstate= STOP;
+					break;
+				}
 				nextstate=Moter_output;
 				break;
 			case Moter_output:
 				motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
+				nextstate = Wait_response;
 				break;
-				
+			case Wait_response:
+				// do nothing
+				break;
 			case STOP:
 				stop_cybergear(&mi_motor, 1);
 				HAL_Delay(3000);
 				nextstate=Moter_init;
 				break;
-			default: 
+			default:  
 				break;
 			
 		}

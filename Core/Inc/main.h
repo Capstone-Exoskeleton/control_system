@@ -83,6 +83,7 @@ typedef enum{
 	Moter_init,
 	Read_gyro,
 	Moter_output,
+	Wait_response,
 	STOP
 	
 } state;

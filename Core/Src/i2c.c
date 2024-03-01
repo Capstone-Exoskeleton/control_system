@@ -53,28 +53,28 @@
 /** Public variables ---------------------------------------------------------*/
 
 /** Private variables --------------------------------------------------------*/
-static uint8_t Soft_Free_State = 1;
+  uint8_t Soft_Free_State = 1;
 /** Private function prototypes ----------------------------------------------*/
-static void delay_xus(__IO uint32_t nTime);
-static void SDA_Output(void);
-static void SDA_Input(void);
-static void SCL_Output(void);
-static void SCL_Input(void);
-static void I2C_Init(void);
-static void I2C_Start(void);
-static void I2C_Stop(void);
-static uint8_t I2C_Wait_Ack(void);
-static void I2C_Ack(void);
-static void I2C_NAck(void);
-static void I2C_Send_Byte(uint8_t txd);
-static uint8_t I2C_Read_Byte(uint8_t ack);
-static uint8_t I2C_Bus_Free_Check(void);
+  void delay_xus(__IO uint32_t nTime);
+  void SDA_Output(void);
+  void SDA_Input(void);
+  void SCL_Output(void);
+  void SCL_Input(void);
+  void I2C_Init(void);
+  void I2C_Start(void);
+  void I2C_Stop(void);
+  uint8_t I2C_Wait_Ack(void);
+  void I2C_Ack(void);
+  void I2C_NAck(void);
+  void I2C_Send_Byte(uint8_t txd);
+  uint8_t I2C_Read_Byte(uint8_t ack);
+  uint8_t I2C_Bus_Free_Check(void);
 /** Private user code --------------------------------------------------------*/
 
 /** Private application code -------------------------------------------------*/
 /*******************************************************************************
 *
-*       Static code
+*         code
 *
 ********************************************************************************
 */
@@ -88,7 +88,7 @@ static uint8_t I2C_Bus_Free_Check(void);
   * @date    2023/11/18
   ******************************************************************
   */
-static void delay_xus(__IO uint32_t nTime)
+  void delay_xus(__IO uint32_t nTime)
 {
     int old_val,new_val,val;
  
@@ -132,7 +132,7 @@ static void delay_xus(__IO uint32_t nTime)
  * @date    2023/11/18
  ******************************************************************
  */
-static void SDA_Output(void)
+  void SDA_Output(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct;
   GPIO_InitStruct.Pin = I2C1_SDA_Pin;
@@ -152,7 +152,7 @@ static void SDA_Output(void)
  * @date    2023/11/18
  ******************************************************************
  */
-static void SDA_Input(void)
+  void SDA_Input(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct;
   GPIO_InitStruct.Pin = I2C1_SDA_Pin;
@@ -172,7 +172,7 @@ static void SDA_Input(void)
  * @date    2023/11/18
  ******************************************************************
  */
-static void SCL_Output(void)
+  void SCL_Output(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct;
   GPIO_InitStruct.Pin = I2C1_SCL_Pin;
@@ -192,7 +192,7 @@ static void SCL_Output(void)
  * @date    2023/11/18
  ******************************************************************
  */
-static void SCL_Input(void)
+  void SCL_Input(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct;
   GPIO_InitStruct.Pin = I2C1_SCL_Pin;
@@ -212,7 +212,7 @@ static void SCL_Input(void)
   * @date    2023/11/18
   ******************************************************************
   */
-static void I2C_Init(void)
+  void I2C_Init(void)
 {  
   SCL_Dout_HIGH();
   SDA_Dout_HIGH();
@@ -230,7 +230,7 @@ static void I2C_Init(void)
   * @date    2023/11/18
   ******************************************************************
   */
-static void I2C_Start(void)
+  void I2C_Start(void)
 {
   SDA_Dout_HIGH();
   SDA_Output();
@@ -252,7 +252,7 @@ static void I2C_Start(void)
   * @date    2023/11/18
   ******************************************************************
   */
-static void I2C_Stop(void)
+  void I2C_Stop(void)
 {
   SDA_Dout_LOW();
   SDA_Output();
@@ -275,7 +275,7 @@ static void I2C_Stop(void)
   * @date    2023/11/18
   ******************************************************************
   */
-static uint8_t I2C_Wait_Ack(void)
+  uint8_t I2C_Wait_Ack(void)
 {
   uint8_t ucErrTime = 0;
 
@@ -312,7 +312,7 @@ static uint8_t I2C_Wait_Ack(void)
   * @date    2023/11/18
   ******************************************************************
   */
-static void I2C_Ack(void)
+  void I2C_Ack(void)
 {
   SCL_Dout_LOW();
 
@@ -335,7 +335,7 @@ static void I2C_Ack(void)
   * @date    2023/11/18
   ******************************************************************
   */
-static void I2C_NAck(void)
+  void I2C_NAck(void)
 {
   SCL_Dout_LOW();
 
@@ -358,7 +358,7 @@ static void I2C_NAck(void)
   * @date    2023/11/18
   ******************************************************************
   */
-static void I2C_Send_Byte(uint8_t txd) 
+  void I2C_Send_Byte(uint8_t txd) 
 {                        
   uint8_t t;      
 
@@ -388,7 +388,7 @@ static void I2C_Send_Byte(uint8_t txd)
   * @date    2023/11/18
   ******************************************************************
   */
-static uint8_t I2C_Read_Byte(uint8_t ack)
+  uint8_t I2C_Read_Byte(uint8_t ack)
 {
   uint8_t i, receive = 0;
   //SDA set input mode
@@ -418,7 +418,7 @@ static uint8_t I2C_Read_Byte(uint8_t ack)
   * @date    2023/11/18
   ******************************************************************
   */
-static uint8_t I2C_Bus_Free_Check(void)
+  uint8_t I2C_Bus_Free_Check(void)
 {
   uint8_t State = 0;
   //SDA input mode
