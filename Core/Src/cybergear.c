@@ -273,12 +273,17 @@ void motor_controlmode(MI_Motor *Motor,float torque, float MechPosition, float s
   * @param[in]      hcan:CAN句柄指针
   * @retval         none
   */
-
+state *local;
+void linked_state(state* localstate){
+		local = localstate;
+}
+int tmp = 0;
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
     HAL_GPIO_TogglePin(GPIOC,LED_Pin);              //LED闪烁指示
     HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxMsg, rx_data);//接收数据
-	Motor_Can_ID=Get_Motor_ID(rxMsg.ExtId);//首先获取回传电机ID信息  
+	/*
+		Motor_Can_ID=Get_Motor_ID(rxMsg.ExtId);//首先获取回传电机ID信息  
     switch(Motor_Can_ID)                   //将对应ID电机信息提取至对应结构体
     {
         case 0X7F:  
@@ -290,6 +295,31 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
         default:
             break;		
     }
+	*/
+		// handle IDLE->IDLE1 case here,
+		// Also handle if motor incorrectly restart itself.
+		if (*local != IDLE1 && rxMsg.ExtId == 0x7FFE){
+			*local = IDLE1;
+			return;
+		}
+		
+		// do not put IDLE case here 
+		switch (*local){
+			case IDLE1:
+				if (rxMsg.ExtId == 0x7FFE) *local = Moter_init;
+				break;
+			case Wait_response: 
+				// bit 16-21 are error bits
+				if ( (rxMsg.ExtId&0x3F0000) != 0){
+					*local = STOP;
+					break;
+				}
+				else {
+					*local = Read_gyro;
+				}
+			default:
+				break;
+			}
 }
 
 

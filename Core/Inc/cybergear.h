@@ -102,6 +102,7 @@ typedef struct{           //小米电机结构体
 }MI_Motor;
 extern MI_Motor mi_motor;//预先定义四个小米电机
 
+extern void linked_state(state* localstate);
 extern void chack_cybergear(uint8_t ID);
 extern void start_cybergear(MI_Motor *Motor);
 extern void stop_cybergear(MI_Motor *Motor, uint8_t clear_error);

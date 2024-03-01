@@ -44,3 +44,6 @@ ctrboard\main.o: D:\app\keil\ARM\ARMCC\Bin\..\include\stdlib.h
 ctrboard\main.o: D:\app\keil\ARM\ARMCC\Bin\..\include\string.h
 ctrboard\main.o: ../Core/Inc/gpio.h
 ctrboard\main.o: ../Core/Inc/cybergear.h
+ctrboard\main.o: D:\app\keil\ARM\ARMCC\Bin\..\include\math.h
+ctrboard\main.o: ../Core/Inc/i2c.h
+ctrboard\main.o: ../Drivers/MPU6050/MPU6050.h

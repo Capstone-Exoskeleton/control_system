@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "cybergear.h"
+#include "math.h"
 
 #ifdef MPU6050_DRIVER
 #include "i2c.h"
@@ -85,13 +86,17 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	char str[30];
+	float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
+	const float minTorque  = 0.5;
+	const float maxTorque  = 4;
+	float outTorque = 0;
+	state nextstate = IDLE;
+	uint8_t stop_count = 0;
+	
 	
 	#ifdef MPU6050_DRIVER
+	long data[9];
 	uint8_t ID;
-	float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
-	const uint16_t minTorque  = 10;
-	const uint16_t maxTorque  = 10000;
-	uint16_t outTorque = 0;
 	#endif
   /* USER CODE END 1 */
 
@@ -101,7 +106,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+	linked_state(&nextstate);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -152,11 +157,7 @@ int main(void)
 	//CAN start
 	MX_CAN2_Filter_Init();
 	HAL_TIM_Base_Start_IT(&htim2); // start timer for can2
-	
-  //HAL_Delay(5000);  
-	//HAL_Delay(5000);
-	init_cybergear(&mi_motor, 0x7F, Motion_mode);
-	//motor_controlmode(&mi_motor, 0, 1, 1, 1 , 1);
+
 
 
   /* USER CODE END 2 */
@@ -166,13 +167,51 @@ int main(void)
 	
   while (1)
   {
+		
+		HAL_Delay(5);
+		
+#ifdef MPU6050_DRIVER
+		timestamp = HAL_GetTick();	//current time
+		mpu_module_sampling();			//MPL sample rate
+		if (mpu_read_euler(data, &timestamp))	
+		{
+			pitch = 1.0f*data[0]/65536.f;					//Convert q16 format to degrees
+			//sprintf(str,"%.2lf/%.2lf/%.2lf\r\n",roll, pitch, yaw);
+			//CDC_Transmit_FS(str,30);
+		}
+#endif
+		
+		if (nextstate == Moter_init){
+				stop_count = 0;
+				init_cybergear(&mi_motor, 0x7F, Motion_mode);
 			
-		//motor_controlmode(&mi_motor, 1, 1, 1, 1 , 1);
-
-		//Debug print format
-		sprintf(str,"Debug %d\r\n",1);
-		CDC_Transmit_FS(str,15);
-		HAL_Delay(10);
+				nextstate = Read_gyro;
+		}
+		else if (nextstate == Read_gyro){
+				//angle to torque calculation
+				//case 1: -45 < pitch < 0, output min torque
+				if (pitch < 0 && pitch > -45 ){
+					outTorque = minTorque;
+					motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
+					nextstate = Wait_response;
+				}
+				//case 2: 0 < pitch < 150, output sin of angle
+				else if (pitch >= 0 && pitch <= 150){
+					outTorque = (maxTorque-minTorque) * sin(pitch / 180 * 3.14159) + minTorque;
+					motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
+					nextstate = Wait_response;
+				}
+				//case 3: unsafe angle zone, jump to emergency stop
+				else {
+					nextstate= STOP;
+				}
+				//sprintf(str,"%.2f %.2f\r\n",outTorque,pitch);
+				//CDC_Transmit_FS(str,20);
+		}
+		else if (nextstate == STOP){
+				stop_cybergear(&mi_motor, 1);
+				nextstate=Moter_init;
+		}
 
 #ifdef HX711
 		float weight;
@@ -183,20 +222,6 @@ int main(void)
 		CDC_Transmit_FS(str,15);
 #endif
 		
-#ifdef MPU6050_DRIVER
-		timestamp = HAL_GetTick();	//current time
-		mpu_module_sampling();			//MPL sample rate
-		long data[9];
-		if (mpu_read_euler(data, &timestamp))	
-		{
-			pitch = 1.0f*data[0]/65536.f;					//Convert q16 format to degrees
-			roll  = 1.0f*data[1]/65536.f;
-			yaw 	= 1.0f*data[2]/65536.f;
-			outTorque =  maxTorque - pitch; //TODO: using only pitch as measurement
-			sprintf(str,"%.2lf/%.2lf/%.2lf\r\n",roll, pitch, yaw);
-			CDC_Transmit_FS(str,30);
-		}
-#endif
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
