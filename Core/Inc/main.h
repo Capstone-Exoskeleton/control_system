@@ -80,9 +80,9 @@ void Error_Handler(void);
 typedef enum{
 	IDLE = 0,
 	IDLE1,
-	Moter_init,
+	Motor_init,
 	Read_gyro,
-	Moter_output,
+	Motor_output,
 	Wait_response,
 	STOP
 	

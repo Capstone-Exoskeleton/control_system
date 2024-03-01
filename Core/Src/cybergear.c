@@ -306,7 +306,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 		// do not put IDLE case here 
 		switch (*local){
 			case IDLE1:
-				if (rxMsg.ExtId == 0x7FFE) *local = Moter_init;
+				if (rxMsg.ExtId == 0x7FFE) *local = Motor_init;
 				break;
 			case Wait_response: 
 				// bit 16-21 are error bits

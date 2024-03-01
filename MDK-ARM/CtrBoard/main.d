@@ -40,4 +40,5 @@ ctrboard/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   C:\Keil_v5\ARM\ARMCLANG\include\stdio.h \
   C:\Keil_v5\ARM\ARMCLANG\include\stdlib.h \
   C:\Keil_v5\ARM\ARMCLANG\include\string.h ..\Core\Inc\gpio.h \
-  ..\Core\Inc\cybergear.h
+  ..\Core\Inc\cybergear.h C:\Keil_v5\ARM\ARMCLANG\include\math.h \
+  ..\Core\Inc\i2c.h ..\Drivers\MPU6050\MPU6050.h

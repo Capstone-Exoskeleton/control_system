@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F446xx,MPU6050,USE_DMP,MPL_LOG_NDEBUG=1,EMPL,EMPL_TARGET_STM32F4,</Define>
+              <Define>USE_HAL_DRIVER,STM32F446xx,MPU6050,MPU6050_DRIVER,USE_DMP,MPL_LOG_NDEBUG=1,EMPL,EMPL_TARGET_STM32F4,</Define>
               <Undefine></Undefine>
               <IncludePath>../Core/Inc;        ../Drivers/STM32F4xx_HAL_Driver/Inc;        ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;        ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;        ../Drivers/CMSIS/Include; ../USB_DEVICE/App; ../USB_DEVICE/Target; ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc; ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc</IncludePath>
             </VariousControls>

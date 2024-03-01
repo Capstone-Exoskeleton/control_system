@@ -168,7 +168,7 @@ int main(void)
 			case IDLE1:
 				// do nothing
 				break;
-			case Moter_init:
+			case Motor_init:
 				
 				init_cybergear(&mi_motor, 0x7F, Motion_mode);
 			
@@ -203,9 +203,9 @@ int main(void)
 					nextstate= STOP;
 					break;
 				}
-				nextstate=Moter_output;
+				nextstate=Motor_output;
 				break;
-			case Moter_output:
+			case Motor_output:
 				motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
 				nextstate = Wait_response;
 				break;
@@ -215,7 +215,7 @@ int main(void)
 			case STOP:
 				stop_cybergear(&mi_motor, 1);
 				HAL_Delay(3000);
-				nextstate=Moter_init;
+				nextstate=Motor_init;
 				break;
 			default:  
 				break;
