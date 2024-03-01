@@ -181,7 +181,7 @@ int main(void)
 			break;
 		case Moter_output:
 			
-		
+			
 		
 			nextstate = Read_gyro;
 			break;

@@ -302,6 +302,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 
 				*local = Moter_init;
 		}
+		if (*local==Moter_output){
+		}
 		
 }
 
