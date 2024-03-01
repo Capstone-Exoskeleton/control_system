@@ -85,13 +85,12 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	char str[30];
+	float outTorque = 0;
 	
 	#ifdef MPU6050_DRIVER
 	uint8_t ID;
 	float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
-	const uint16_t minTorque  = 10;
-	const uint16_t maxTorque  = 10000;
-	uint16_t outTorque = 0;
+	long data[9];
 	#endif
   /* USER CODE END 1 */
 
@@ -162,8 +161,10 @@ int main(void)
 		HAL_Delay(10);
 		switch (nextstate){
 			case IDLE:
-
-
+				// do nothing
+				break;
+			case IDLE1:
+				// do nothing
 				break;
 			case Moter_init:
 				
@@ -173,19 +174,30 @@ int main(void)
 			
 				break;
 			case Read_gyro:
+#ifdef MPU6050_DRIVER
+				timestamp = HAL_GetTick();	//current time
+				mpu_module_sampling();			//MPL sample rate
 				
+				if (mpu_read_euler(data, &timestamp))	
+				{
+					pitch = 1.0f*data[0]/65536.f;					//Convert q16 format to degrees
+					roll  = 1.0f*data[1]/65536.f;
+					yaw 	= 1.0f*data[2]/65536.f;
+					outTorque =  pitch / 90 * 4; //TODO: using only pitch as measurement
+					sprintf(str,"%.2lf/%.2lf/%.2lf\r\n",roll, pitch, yaw);
+					CDC_Transmit_FS(str,30);
+				}
+#endif
 				nextstate=Moter_output;
 				break;
 			case Moter_output:
-				
-				
-			
-				nextstate = Read_gyro;
+				motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
 				break;
 				
 			case STOP:
-				
-				
+				stop_cybergear(&mi_motor, 1);
+				HAL_Delay(3000);
+				nextstate=Moter_init;
 				break;
 			default: 
 				break;
@@ -208,20 +220,6 @@ int main(void)
 		CDC_Transmit_FS(str,15);
 #endif
 		
-#ifdef MPU6050_DRIVER
-		timestamp = HAL_GetTick();	//current time
-		mpu_module_sampling();			//MPL sample rate
-		long data[9];
-		if (mpu_read_euler(data, &timestamp))	
-		{
-			pitch = 1.0f*data[0]/65536.f;					//Convert q16 format to degrees
-			roll  = 1.0f*data[1]/65536.f;
-			yaw 	= 1.0f*data[2]/65536.f;
-			outTorque =  maxTorque - pitch; //TODO: using only pitch as measurement
-			sprintf(str,"%.2lf/%.2lf/%.2lf\r\n",roll, pitch, yaw);
-			CDC_Transmit_FS(str,30);
-		}
-#endif
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

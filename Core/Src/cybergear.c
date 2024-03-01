@@ -282,6 +282,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
     HAL_GPIO_TogglePin(GPIOC,LED_Pin);              //LED闪烁指示
     HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxMsg, rx_data);//接收数据
+	/*
 		Motor_Can_ID=Get_Motor_ID(rxMsg.ExtId);//首先获取回传电机ID信息  
     switch(Motor_Can_ID)                   //将对应ID电机信息提取至对应结构体
     {
@@ -294,17 +295,22 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
         default:
             break;		
     }
-		
-		if (*local==IDLE  ){
-				tmp = 1;
-		}
-		if (*local==IDLE && rxMsg.ExtId == 0x7FFE){
-
-				*local = Moter_init;
-		}
-		if (*local==Moter_output){
+	*/
+		// handle IDLE->IDLE1 case here,
+		// Also handle if motor incorrectly restart itself.
+		if (*local != IDLE1 && rxMsg.ExtId == 0x7FFE){
+			*local = IDLE1;
+			return;
 		}
 		
+		// do not put IDLE case here 
+		switch (*local){
+			case IDLE1:
+				if (rxMsg.ExtId == 0x7FFE) *local = Moter_init;
+				break;
+			default:
+				break;
+			}
 }
 
 

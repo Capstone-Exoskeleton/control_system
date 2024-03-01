@@ -77,14 +77,15 @@ void Error_Handler(void);
 #define I2C1_SDA_Pin GPIO_PIN_8
 #define I2C1_GPIO_Port GPIOC
 
-	typedef enum{
-		IDLE = 0,
-		Moter_init,
-		Read_gyro,
-		Moter_output,
-		STOP
-		
-	} state;
+typedef enum{
+	IDLE = 0,
+	IDLE1,
+	Moter_init,
+	Read_gyro,
+	Moter_output,
+	STOP
+	
+} state;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
