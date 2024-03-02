@@ -88,7 +88,7 @@ int main(void)
 	char str[30];
 	float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
 	const float minTorque  = 0.5;
-	const float maxTorque  = 4;
+	const float maxTorque  = 2;
 	float outTorque = 0;
 	state nextstate = IDLE;
 	uint8_t stop_count = 0;
@@ -168,7 +168,7 @@ int main(void)
   while (1)
   {
 		
-		HAL_Delay(5);
+		HAL_Delay(10);
 		
 #ifdef MPU6050_DRIVER
 		timestamp = HAL_GetTick();	//current time
@@ -193,13 +193,14 @@ int main(void)
 				if (pitch < 0 && pitch > -45 ){
 					outTorque = minTorque;
 					motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
-					nextstate = Wait_response;
+					//nextstate = Wait_response;
 				}
 				//case 2: 0 < pitch < 150, output sin of angle
 				else if (pitch >= 0 && pitch <= 150){
 					outTorque = (maxTorque-minTorque) * sin(pitch / 180 * 3.14159) + minTorque;
+					if (outTorque > maxTorque) outTorque = maxTorque;
 					motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
-					nextstate = Wait_response;
+					//nextstate = Wait_response;
 				}
 				//case 3: unsafe angle zone, jump to emergency stop
 				else {
@@ -210,6 +211,7 @@ int main(void)
 		}
 		else if (nextstate == STOP){
 				stop_cybergear(&mi_motor, 1);
+				HAL_Delay(2000);
 				nextstate=Moter_init;
 		}
 

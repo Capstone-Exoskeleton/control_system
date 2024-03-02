@@ -308,14 +308,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 			case IDLE1:
 				if (rxMsg.ExtId == 0x7FFE) *local = Moter_init;
 				break;
-			case Wait_response: 
+			case Read_gyro: 
 				// bit 16-21 are error bits
 				if ( (rxMsg.ExtId&0x3F0000) != 0){
 					*local = STOP;
 					break;
-				}
-				else {
-					*local = Read_gyro;
 				}
 			default:
 				break;
