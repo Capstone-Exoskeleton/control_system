@@ -21,7 +21,7 @@
 #include "main.h"
 #include "can.h"
 #include "tim.h"
-#include "usb_device.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -32,7 +32,8 @@
 
 #ifdef MPU6050_DRIVER
 #include "i2c.h"
-#include "MPU6050.h"
+//#include "MPU6050.h"
+#include "kalman.h"
 #endif
 
 #ifdef HX711
@@ -47,6 +48,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define MPU6050_DEVICE_ID 0x68
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -68,13 +70,13 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-/*
+
 int fputc(int ch, FILE *f)//printf
 {
 	HAL_UART_Transmit(&huart5, (uint8_t *)&ch, 1,0xffff);
 	return (ch);
 }
-*/
+
 
 /* USER CODE END 0 */
 
@@ -86,12 +88,14 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	char str[30];
-	float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
+	float pitch = 0.0f;
 	const float minTorque  = 0.5;
 	const float maxTorque  = 2;
 	float outTorque = 0;
 	state nextstate = IDLE;
 	uint8_t stop_count = 0;
+	uint8_t fast_recover = 0;
+	uint8_t counter = 0;
 	
 	
 	#ifdef MPU6050_DRIVER
@@ -120,7 +124,7 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   MX_CAN2_Init();
-  MX_USB_DEVICE_Init();
+  MX_UART5_Init();
   /* USER CODE BEGIN 2 */
 
 	// write LED
@@ -140,11 +144,15 @@ int main(void)
 	
 #ifdef MPU6050_DRIVER
 	//---------------initialize MPU6050-----------------------
-	Soft_I2C_Init();
+	//Soft_I2C_Init();
 	
-	while(!module_mpu_init()){HAL_Delay(20);};
-
-  unsigned long timestamp;
+	MPU6050_Init();
+	while(MPU6050_GetID() != MPU6050_DEVICE_ID)
+	{
+		printf("Unable to verify MPU6050 ID: %d\n",ID);
+		HAL_Delay(100);
+		MPU6050_Init();
+	}
 #endif
 	
 	
@@ -168,23 +176,32 @@ int main(void)
   while (1)
   {
 		
-		HAL_Delay(10);
+		HAL_Delay(5);
 		
 #ifdef MPU6050_DRIVER
+		/*
 		timestamp = HAL_GetTick();	//current time
 		mpu_module_sampling();			//MPL sample rate
 		if (mpu_read_euler(data, &timestamp))	
 		{
+		  printf("1: %ld, 2: %ld, 3: %ld",data[0], data[1], data[2]);
 			pitch = 1.0f*data[0]/65536.f;					//Convert q16 format to degrees
 			//sprintf(str,"%.2lf/%.2lf/%.2lf\r\n",roll, pitch, yaw);
 			//CDC_Transmit_FS(str,30);
 		}
+		*/
+
+		pitch = Get_kalman_angle() ;
 #endif
-		
+
 		if (nextstate == Moter_init){
 				stop_count = 0;
 				init_cybergear(&mi_motor, 0x7F, Motion_mode);
 			
+				nextstate = Start_wait;
+		}
+		else if (nextstate == Start_wait){
+			if (HAL_GPIO_ReadPin(USER_KEY_GPIO_Port, USER_KEY_Pin) == GPIO_PIN_RESET)
 				nextstate = Read_gyro;
 		}
 		else if (nextstate == Read_gyro){
@@ -206,8 +223,6 @@ int main(void)
 				else {
 					nextstate= STOP;
 				}
-				//sprintf(str,"%.2f %.2f\r\n",outTorque,pitch);
-				//CDC_Transmit_FS(str,20);
 		}
 		else if (nextstate == STOP){
 				stop_cybergear(&mi_motor, 1);
@@ -239,12 +254,11 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -253,11 +267,17 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 6;
-  RCC_OscInitStruct.PLL.PLLN = 120;
+  RCC_OscInitStruct.PLL.PLLN = 180;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 5;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Activate the Over-Drive mode
+  */
+  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }
@@ -270,13 +290,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CLK48;
-  PeriphClkInitStruct.Clk48ClockSelection = RCC_CLK48CLKSOURCE_PLLQ;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
     Error_Handler();
   }

@@ -22,35 +22,27 @@ Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
 D:\personal-project\roboeg\control_system\MDK-ARM\CtrBoard.uvprojx
-Project File Date:  03/01/2024
+Project File Date:  03/19/2024
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\app\keil\ARM\ARMCC\Bin'
 Build target 'CtrBoard'
-compiling main.c...
-../Core/Src/main.c(127): warning:  #188-D: enumerated type mixed with another type
-  	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
-../Core/Src/main.c(130): warning:  #188-D: enumerated type mixed with another type
-  	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
-../Core/Src/main.c(152): warning:  #188-D: enumerated type mixed with another type
-  	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
-../Core/Src/main.c(200): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  					outTorque = (maxTorque-minTorque) * sin(pitch / 180 * 3.14159) + minTorque;
-../Core/Src/main.c(88): warning:  #177-D: variable "str"  was declared but never referenced
-  	char str[30];
-../Core/Src/main.c(89): warning:  #177-D: variable "roll"  was declared but never referenced
-  	float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
-../Core/Src/main.c(89): warning:  #177-D: variable "yaw"  was declared but never referenced
-  	float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
-../Core/Src/main.c(94): warning:  #550-D: variable "stop_count"  was set but never used
-  	uint8_t stop_count = 0;
-../Core/Src/main.c(99): warning:  #177-D: variable "ID"  was declared but never referenced
-  	uint8_t ID;
-../Core/Src/main.c: 9 warnings, 0 errors
+compiling kalman.c...
+../Core/Inc/kalman.h(69): warning:  #1295-D: Deprecated declaration MPU6050_Init - give arg types
+  void MPU6050_Init();
+../Core/Inc/kalman.h(70): warning:  #1295-D: Deprecated declaration MPU6050_GetID - give arg types
+  uint8_t MPU6050_GetID();
+../Core/Inc/kalman.h(71): warning:  #1295-D: Deprecated declaration Get_kalman_angle - give arg types
+  float Get_kalman_angle();
+../Core/Inc/kalman.h(72): warning:  #1295-D: Deprecated declaration MPU6050_Read_All - give arg types
+  void MPU6050_Read_All();
+../Core/Inc/kalman.h(74): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Core\Src\kalman.c: 5 warnings, 0 errors
 linking...
-Program Size: Code=45488 RO-data=1032 RW-data=512 ZI-data=12760  
+Program Size: Code=18976 RO-data=960 RW-data=200 ZI-data=2392  
 FromELF: creating hex file...
-"CtrBoard\CtrBoard.axf" - 0 Error(s), 9 Warning(s).
+"CtrBoard\CtrBoard.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -74,7 +66,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.4.0
       Include file:  CMSIS\Core\Include\tz_context.h
-Build Time Elapsed:  00:00:04
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

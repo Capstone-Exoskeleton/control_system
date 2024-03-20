@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file    can.h
+  * @file    usart.h
   * @brief   This file contains all the function prototypes for
-  *          the can.c file
+  *          the usart.c file
   ******************************************************************************
   * @attention
   *
@@ -17,8 +17,8 @@
   ******************************************************************************
   */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __CAN_H__
-#define __CAN_H__
+#ifndef __USART_H__
+#define __USART_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,22 +31,22 @@ extern "C" {
 
 /* USER CODE END Includes */
 
-extern CAN_HandleTypeDef hcan2;
+extern UART_HandleTypeDef huart5;
 
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-void MX_CAN2_Init(void);
+void MX_UART5_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void MX_CAN2_Filter_Init(void);
+
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __CAN_H__ */
+#endif /* __USART_H__ */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

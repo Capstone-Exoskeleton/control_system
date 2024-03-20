@@ -32,13 +32,13 @@
  * @name CPU Frequency
  * @{
  */
-#define CPU_FREQUENCY_MHZ 8
+#define CPU_FREQUENCY_MHZ 180
 /** @}*/
 /**
  * @name Baudrate
  * @{
  */
-#define I2C_BAUDRATE_DELAY_US      2/**< Delay in us*/
+#define I2C_BAUDRATE_DELAY_US      5/**< Delay in us*/
  
 #define Delay_us(xx)  delay_xus(xx)
 
