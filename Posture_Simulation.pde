@@ -6,7 +6,7 @@ String data="";
 float roll, pitch,yaw;
 void setup() {
   size (1920, 1080, P3D);
-  myPort = new Serial(this, "COM5", 57600);//need to modify
+  myPort = new Serial(this, "COM3", 115200);//need to modify
   myPort.bufferUntil('\n');
 }
 void draw() {

@@ -28,7 +28,7 @@ Kalman_t KalmanX = {
 };
 
 Kalman_t KalmanY = {
-        .Q_angle = 0.001f,
+        .Q_angle = 0.02f,
         .Q_bias = 0.003f,
         .R_measure = 0.03f,
 };
@@ -177,7 +177,7 @@ void MPU6050_GetData(int16_t* AccX,int16_t* AccY,int16_t* AccZ,int16_t* GyroX,in
 float Get_kalman_angle()
 {
 	MPU6050_Read_All();
-	return sensor->KalmanAngleX;
+	return sensor->KalmanAngleY;
 }
 
 double Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double dt) {
@@ -250,24 +250,29 @@ void MPU6050_Read_All()
     // Kalman angle solve
     double dt = (double) (HAL_GetTick() - timer) / 1000;
     timer = HAL_GetTick();
+		/*
     double roll;
     double roll_sqrt = sqrt(
-            sensor->Accel_X_RAW * sensor->Accel_X_RAW + sensor->Accel_Z_RAW * sensor->Accel_Z_RAW);
+            sensor->Accel_X_RAW * sensor->Accel_X_RAW + sensor->Accel_Y_RAW * sensor->Accel_Y_RAW);
     if (roll_sqrt != 0.0) {
-        roll = atan(sensor->Accel_Y_RAW / roll_sqrt) * RAD_TO_DEG;
+        roll = atan((-1.0f)*sensor->Accel_Z_RAW / roll_sqrt) * RAD_TO_DEG;
     } else {
         roll = 0.0;
     }
-    double pitch = atan2(-sensor->Accel_X_RAW, sensor->Accel_Z_RAW) * RAD_TO_DEG;
+		*/
+    double pitch = atan2(sensor->Accel_Y_RAW, sensor->Accel_X_RAW) * RAD_TO_DEG;
     if ((pitch < -90 && sensor->KalmanAngleY > 90) || (pitch > 90 && sensor->KalmanAngleY < -90)) {
         KalmanY.angle = pitch;
         sensor->KalmanAngleY = pitch;
     } else {
-        sensor->KalmanAngleY = Kalman_getAngle(&KalmanY, pitch, sensor->Gy, dt);
+        sensor->KalmanAngleY = Kalman_getAngle(&KalmanY, pitch, (-1.0f)*sensor->Gz, dt);
     }
+		/*
     if (fabs(sensor->KalmanAngleY) > 90)
         sensor->Gx = -sensor->Gx;
     sensor->KalmanAngleX = Kalman_getAngle(&KalmanX, roll, sensor->Gy, dt);
-		printf("%.2f %.2f,%.2f %.2f %.2f %d %d %d\n\r", sensor->KalmanAngleX, sensor->KalmanAngleY, sensor->Ax, sensor->Ay, sensor->Az, sensor->Gyro_X_RAW, sensor->Gyro_Y_RAW, sensor->Gyro_Z_RAW);
+		*/
+		//printf("%.2f %.2f,%.2f %.2f %.2f %d %d %d\n\r", sensor->KalmanAngleX, sensor->KalmanAngleY, sensor->Ax, sensor->Ay, sensor->Az, sensor->Gyro_X_RAW, sensor->Gyro_Y_RAW, sensor->Gyro_Z_RAW);
+		//printf("0/%.2f/0\r\n",sensor->KalmanAngleY);
 }
 
