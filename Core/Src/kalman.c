@@ -260,12 +260,12 @@ void MPU6050_Read_All()
         roll = 0.0;
     }
 		*/
-    double pitch = atan2(sensor->Accel_Y_RAW, sensor->Accel_X_RAW) * RAD_TO_DEG;
+    double pitch = atan2(sensor->Accel_Y_RAW, (-1)*sensor->Accel_X_RAW) * RAD_TO_DEG;
     if ((pitch < -90 && sensor->KalmanAngleY > 90) || (pitch > 90 && sensor->KalmanAngleY < -90)) {
         KalmanY.angle = pitch;
         sensor->KalmanAngleY = pitch;
     } else {
-        sensor->KalmanAngleY = Kalman_getAngle(&KalmanY, pitch, (-1.0f)*sensor->Gz, dt);
+        sensor->KalmanAngleY = Kalman_getAngle(&KalmanY, pitch, sensor->Gz, dt);
     }
 		/*
     if (fabs(sensor->KalmanAngleY) > 90)
@@ -273,6 +273,6 @@ void MPU6050_Read_All()
     sensor->KalmanAngleX = Kalman_getAngle(&KalmanX, roll, sensor->Gy, dt);
 		*/
 		//printf("%.2f %.2f,%.2f %.2f %.2f %d %d %d\n\r", sensor->KalmanAngleX, sensor->KalmanAngleY, sensor->Ax, sensor->Ay, sensor->Az, sensor->Gyro_X_RAW, sensor->Gyro_Y_RAW, sensor->Gyro_Z_RAW);
-		//printf("0/%.2f/0\r\n",sensor->KalmanAngleY);
+		printf("0/%.2f/0\r\n",sensor->KalmanAngleY);
 }
 

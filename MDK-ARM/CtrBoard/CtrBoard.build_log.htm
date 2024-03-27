@@ -27,7 +27,7 @@ Project File Date:  03/19/2024
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\app\keil\ARM\ARMCC\Bin'
 Build target 'CtrBoard'
-compiling kalman.c...
+compiling main.c...
 ../Core/Inc/kalman.h(69): warning:  #1295-D: Deprecated declaration MPU6050_Init - give arg types
   void MPU6050_Init();
 ../Core/Inc/kalman.h(70): warning:  #1295-D: Deprecated declaration MPU6050_GetID - give arg types
@@ -38,11 +38,27 @@ compiling kalman.c...
   void MPU6050_Read_All();
 ../Core/Inc/kalman.h(74): warning:  #1-D: last line of file ends without a newline
   #endif
-..\Core\Src\kalman.c: 5 warnings, 0 errors
+../Core/Src/main.c(131): warning:  #188-D: enumerated type mixed with another type
+  	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
+../Core/Src/main.c(134): warning:  #188-D: enumerated type mixed with another type
+  	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
+../Core/Src/main.c(160): warning:  #188-D: enumerated type mixed with another type
+  	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
+../Core/Src/main.c(218): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  					outTorque = (maxTorque-minTorque) * sin(pitch / 180 * 3.14159) + minTorque;
+../Core/Src/main.c(90): warning:  #177-D: variable "str"  was declared but never referenced
+  	char str[30];
+../Core/Src/main.c(96): warning:  #550-D: variable "stop_count"  was set but never used
+  	uint8_t stop_count = 0;
+../Core/Src/main.c(97): warning:  #550-D: variable "counter"  was set but never used
+  	uint8_t counter = 0;
+../Core/Src/main.c(102): warning:  #177-D: variable "data"  was declared but never referenced
+  	long data[9];
+../Core/Src/main.c: 13 warnings, 0 errors
 linking...
-Program Size: Code=18392 RO-data=960 RW-data=128 ZI-data=2392  
+Program Size: Code=18416 RO-data=960 RW-data=128 ZI-data=2392  
 FromELF: creating hex file...
-"CtrBoard\CtrBoard.axf" - 0 Error(s), 5 Warning(s).
+"CtrBoard\CtrBoard.axf" - 0 Error(s), 13 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -66,7 +82,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.4.0
       Include file:  CMSIS\Core\Include\tz_context.h
-Build Time Elapsed:  00:00:12
+Build Time Elapsed:  00:00:04
 </pre>
 </body>
 </html>

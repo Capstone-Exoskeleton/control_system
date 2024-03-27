@@ -90,12 +90,12 @@ int main(void)
 	char str[30];
 	float pitch = 0.0f;
 	const float minTorque  = 0.5;
-	const float maxTorque  = 2;
+	const float maxTorque  = 4;
 	float outTorque = 0;
 	state nextstate = IDLE;
 	uint8_t stop_count = 0;
-	uint8_t fast_recover = 0;
 	uint8_t counter = 0;
+	
 	
 	
 	#ifdef MPU6050_DRIVER
@@ -205,6 +205,7 @@ int main(void)
 				nextstate = Read_gyro;
 		}
 		else if (nextstate == Read_gyro){
+				counter = 0;
 				//angle to torque calculation
 				//case 1: -45 < pitch < 0, output min torque
 				if (pitch < 0 && pitch > -45 ){
@@ -224,6 +225,18 @@ int main(void)
 					nextstate= STOP;
 				}
 		}
+		/*
+		else if (nextstate == Wait_response){
+				counter++;
+				if (counter == 0x40){
+					stop_count++;
+					if (stop_count == 3)
+						nextstate = STOP;
+					else
+						nextstate = Read_gyro;
+				}
+		}
+		*/
 		else if (nextstate == STOP){
 				stop_cybergear(&mi_motor, 1);
 				HAL_Delay(2000);
