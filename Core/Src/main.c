@@ -76,8 +76,16 @@ int fputc(int ch, FILE *f)//printf
 	HAL_UART_Transmit(&huart5, (uint8_t *)&ch, 1,0xffff);
 	return (ch);
 }
+state nextstate = IDLE;
 
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if(GPIO_Pin==USER_KEY_Pin)
+  {
+		if (nextstate == Start_wait) nextstate = Read_gyro;
+		else nextstate = Slow_stop;
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -92,9 +100,10 @@ int main(void)
 	const float minTorque  = 0.5;
 	const float maxTorque  = 4;
 	float outTorque = 0;
-	state nextstate = IDLE;
+	
 	uint8_t stop_count = 0;
 	uint8_t counter = 0;
+	uint8_t slow_start = 1;
 	
 	
 	
@@ -193,16 +202,12 @@ int main(void)
 
 		pitch = Get_kalman_angle() ;
 #endif
-
 		if (nextstate == Moter_init){
 				stop_count = 0;
 				init_cybergear(&mi_motor, 0x7F, Motion_mode);
 			
 				nextstate = Start_wait;
-		}
-		else if (nextstate == Start_wait){
-			if (HAL_GPIO_ReadPin(USER_KEY_GPIO_Port, USER_KEY_Pin) == GPIO_PIN_RESET)
-				nextstate = Read_gyro;
+				slow_start = 1;
 		}
 		else if (nextstate == Read_gyro){
 				counter = 0;
@@ -210,20 +215,29 @@ int main(void)
 				//case 1: -45 < pitch < 0, output min torque
 				if (pitch < 0 && pitch > -45 ){
 					outTorque = minTorque;
-					motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
-					//nextstate = Wait_response;
+					nextstate = Moter_output;
 				}
 				//case 2: 0 < pitch < 150, output sin of angle
 				else if (pitch >= 0 && pitch <= 150){
 					outTorque = (maxTorque-minTorque) * sin(pitch / 180 * 3.14159) + minTorque;
 					if (outTorque > maxTorque) outTorque = maxTorque;
-					motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
-					//nextstate = Wait_response;
+					nextstate = Moter_output;
 				}
 				//case 3: unsafe angle zone, jump to emergency stop
 				else {
-					nextstate= STOP;
+					nextstate= Slow_stop;
 				}
+		}
+		else if (nextstate == Moter_output){
+				//slow start if this is the first
+				if (slow_start){	
+					for (float tmpTorque = 0; tmpTorque < outTorque; tmpTorque+=0.5){
+							motor_controlmode(&mi_motor, tmpTorque, 0, 0, 0 , 0);
+							HAL_Delay(100);
+					}
+					slow_start = 0;
+				}
+				motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
 		}
 		/*
 		else if (nextstate == Wait_response){
@@ -237,6 +251,14 @@ int main(void)
 				}
 		}
 		*/
+		else if (nextstate == Slow_stop){
+				for (; outTorque>0; outTorque-=0.5){
+						motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
+						HAL_Delay(100);
+				}
+				stop_cybergear(&mi_motor, 1);
+				nextstate=Moter_init;
+		}
 		else if (nextstate == STOP){
 				stop_cybergear(&mi_motor, 1);
 				HAL_Delay(2000);

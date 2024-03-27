@@ -68,6 +68,7 @@ void Error_Handler(void);
 #define Power_OUT2_EN_GPIO_Port GPIOC
 #define USER_KEY_Pin GPIO_PIN_15
 #define USER_KEY_GPIO_Port GPIOA
+#define USER_KEY_EXTI_IRQn EXTI15_10_IRQn
 /* USER CODE BEGIN Private defines */
 #define HX711_GPIO_Port GPIOC
 #define HX711_CLK_Pin GPIO_PIN_7
@@ -83,8 +84,9 @@ typedef enum{
 	Moter_init,
 	Start_wait,
 	Read_gyro,
-	//Moter_output,
+	Moter_output,
 	Wait_response,
+	Slow_stop,
 	STOP,
 	
 } state;
