@@ -3,9 +3,9 @@
 <title>Static Call Graph - [CtrBoard\CtrBoard.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image CtrBoard\CtrBoard.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed Mar 27 16:17:21 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Apr 09 09:04:06 2024
 <BR><P>
-<H3>Maximum Stack Usage =        304 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        328 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 main &rArr; Get_kalman_angle &rArr; MPU6050_Read_All &rArr; __hardfp_atan2 &rArr; atan &rArr; __hardfp_atan &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 <P>
@@ -699,8 +699,8 @@ Global Symbols
 <P><STRONG><a name="[dc]"></a>HAL_CAN_AddTxMessage</STRONG> (Thumb, 220 bytes, Stack size 20 bytes, stm32f4xx_hal_can.o(i.HAL_CAN_AddTxMessage))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = HAL_CAN_AddTxMessage
 </UL>
-<BR>[Called By]<UL><LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stop_cybergear
-<LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;start_cybergear
+<BR>[Called By]<UL><LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stop_cybergear
+<LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;start_cybergear
 <LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_controlmode
 <LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_Motor_Parameter
 </UL>
@@ -1049,7 +1049,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Init
 </UL>
 
-<P><STRONG><a name="[fa]"></a>HAL_TIM_Base_Start_IT</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, stm32f4xx_hal_tim.o(i.HAL_TIM_Base_Start_IT))
+<P><STRONG><a name="[f9]"></a>HAL_TIM_Base_Start_IT</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, stm32f4xx_hal_tim.o(i.HAL_TIM_Base_Start_IT))
 <BR><BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
@@ -1517,28 +1517,27 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> printfa.o(i.__0printf)
 </UL>
-<P><STRONG><a name="[f6]"></a>init_cybergear</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, cybergear.o(i.init_cybergear))
-<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = init_cybergear &rArr; start_cybergear &rArr; HAL_CAN_AddTxMessage
+<P><STRONG><a name="[f6]"></a>init_cybergear</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, cybergear.o(i.init_cybergear))
+<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = init_cybergear &rArr; set_mode_cybergear &rArr; Set_Motor_Parameter &rArr; HAL_CAN_AddTxMessage
 </UL>
-<BR>[Calls]<UL><LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;start_cybergear
-<LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_mode_cybergear
+<BR>[Calls]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_mode_cybergear
 </UL>
 <BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[f9]"></a>linked_state</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, cybergear.o(i.linked_state))
+<P><STRONG><a name="[f8]"></a>linked_state</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, cybergear.o(i.linked_state))
 <BR><BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[61]"></a>main</STRONG> (Thumb, 500 bytes, Stack size 24 bytes, main.o(i.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 304<LI>Call Chain = main &rArr; Get_kalman_angle &rArr; MPU6050_Read_All &rArr; __hardfp_atan2 &rArr; atan &rArr; __hardfp_atan &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
+<P><STRONG><a name="[61]"></a>main</STRONG> (Thumb, 628 bytes, Stack size 48 bytes, main.o(i.main))
+<BR><BR>[Stack]<UL><LI>Max Depth = 328<LI>Call Chain = main &rArr; Get_kalman_angle &rArr; MPU6050_Read_All &rArr; __hardfp_atan2 &rArr; atan &rArr; __hardfp_atan &rArr; __kernel_poly &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_UART5_Init
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
 <LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_CAN2_Init
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_CAN2_Filter_Init
-<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Start_IT
+<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Start_IT
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Init
 <LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
@@ -1550,9 +1549,10 @@ Global Symbols
 <LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_kalman_angle
 <LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
-<LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stop_cybergear
+<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stop_cybergear
+<LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;start_cybergear
 <LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_controlmode
-<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;linked_state
+<LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;linked_state
 <LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_cybergear
 <LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sin
 <LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
@@ -1576,15 +1576,15 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_cybergear
 </UL>
 
-<P><STRONG><a name="[f8]"></a>start_cybergear</STRONG> (Thumb, 30 bytes, Stack size 16 bytes, cybergear.o(i.start_cybergear))
+<P><STRONG><a name="[fb]"></a>start_cybergear</STRONG> (Thumb, 30 bytes, Stack size 16 bytes, cybergear.o(i.start_cybergear))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = start_cybergear &rArr; HAL_CAN_AddTxMessage
 </UL>
 <BR>[Calls]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_CAN_AddTxMessage
 </UL>
-<BR>[Called By]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_cybergear
+<BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[fb]"></a>stop_cybergear</STRONG> (Thumb, 34 bytes, Stack size 16 bytes, cybergear.o(i.stop_cybergear))
+<P><STRONG><a name="[fa]"></a>stop_cybergear</STRONG> (Thumb, 34 bytes, Stack size 16 bytes, cybergear.o(i.stop_cybergear))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = stop_cybergear &rArr; HAL_CAN_AddTxMessage
 </UL>
 <BR>[Calls]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_CAN_AddTxMessage

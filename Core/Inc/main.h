@@ -82,6 +82,7 @@ typedef enum{
 	IDLE = 0,
 	IDLE1,
 	Moter_init,
+	Slow_start,
 	Start_wait,
 	Read_gyro,
 	Moter_output,

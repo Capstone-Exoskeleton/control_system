@@ -27,42 +27,7 @@ Project File Date:  03/27/2024
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\app\keil\ARM\ARMCC\Bin'
 Build target 'CtrBoard'
-compiling main.c...
-../Core/Inc/kalman.h(69): warning:  #1295-D: Deprecated declaration MPU6050_Init - give arg types
-  void MPU6050_Init();
-../Core/Inc/kalman.h(70): warning:  #1295-D: Deprecated declaration MPU6050_GetID - give arg types
-  uint8_t MPU6050_GetID();
-../Core/Inc/kalman.h(71): warning:  #1295-D: Deprecated declaration Get_kalman_angle - give arg types
-  float Get_kalman_angle();
-../Core/Inc/kalman.h(72): warning:  #1295-D: Deprecated declaration MPU6050_Read_All - give arg types
-  void MPU6050_Read_All();
-../Core/Inc/kalman.h(74): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Src/main.c(140): warning:  #188-D: enumerated type mixed with another type
-  	HAL_GPIO_WritePin(GPIOC, LED_Pin,0);
-../Core/Src/main.c(143): warning:  #188-D: enumerated type mixed with another type
-  	HAL_GPIO_WritePin(GPIOC, Power_5V_EN_Pin,1);
-../Core/Src/main.c(169): warning:  #188-D: enumerated type mixed with another type
-  	HAL_GPIO_WritePin(GPIOC, Power_OUT2_EN_Pin,1);
-../Core/Src/main.c(222): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  					outTorque = (maxTorque-minTorque) * sin(pitch / 180 * 3.14159) + minTorque;
-../Core/Src/main.c(234): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  					for (float tmpTorque = 0; tmpTorque < outTorque; tmpTorque+=0.5){
-../Core/Src/main.c(255): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  				for (; outTorque>0; outTorque-=0.5){
-../Core/Src/main.c(98): warning:  #177-D: variable "str"  was declared but never referenced
-  	char str[30];
-../Core/Src/main.c(104): warning:  #550-D: variable "stop_count"  was set but never used
-  	uint8_t stop_count = 0;
-../Core/Src/main.c(105): warning:  #550-D: variable "counter"  was set but never used
-  	uint8_t counter = 0;
-../Core/Src/main.c(111): warning:  #177-D: variable "data"  was declared but never referenced
-  	long data[9];
-../Core/Src/main.c: 15 warnings, 0 errors
-linking...
-Program Size: Code=18608 RO-data=960 RW-data=132 ZI-data=2388  
-FromELF: creating hex file...
-"CtrBoard\CtrBoard.axf" - 0 Error(s), 15 Warning(s).
+"CtrBoard\CtrBoard.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -86,7 +51,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.4.0
       Include file:  CMSIS\Core\Include\tz_context.h
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

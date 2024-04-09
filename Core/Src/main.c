@@ -82,7 +82,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   if(GPIO_Pin==USER_KEY_Pin)
   {
-		if (nextstate == Start_wait) nextstate = Read_gyro;
+		if (nextstate == Start_wait) nextstate = Slow_start;
 		else nextstate = Slow_stop;
   }
 }
@@ -103,7 +103,6 @@ int main(void)
 	
 	uint8_t stop_count = 0;
 	uint8_t counter = 0;
-	uint8_t slow_start = 1;
 	
 	
 	
@@ -207,7 +206,26 @@ int main(void)
 				init_cybergear(&mi_motor, 0x7F, Motion_mode);
 			
 				nextstate = Start_wait;
-				slow_start = 1;
+		}
+		//slow start if this is the first
+		if (nextstate == Slow_start){	
+				start_cybergear(&mi_motor);
+				
+				//get the first angle
+				if (pitch < 0 && pitch > -45 ){
+						outTorque = minTorque;
+				}
+				//case 2: 0 < pitch < 150, output sin of angle
+				else if (pitch >= 0 && pitch <= 150){
+					outTorque = (maxTorque-minTorque) * sin(pitch / 180 * 3.14159) + minTorque;
+					if (outTorque > maxTorque) outTorque = maxTorque;
+				}
+				//slow start
+				for (float tmpTorque = 0; tmpTorque < outTorque; tmpTorque+=0.5){
+						HAL_Delay(100);
+						motor_controlmode(&mi_motor, tmpTorque, 0, 0, 0 , 0);
+				}
+				nextstate = Read_gyro;
 		}
 		else if (nextstate == Read_gyro){
 				counter = 0;
@@ -229,14 +247,6 @@ int main(void)
 				}
 		}
 		else if (nextstate == Moter_output){
-				//slow start if this is the first
-				if (slow_start){	
-					for (float tmpTorque = 0; tmpTorque < outTorque; tmpTorque+=0.5){
-							motor_controlmode(&mi_motor, tmpTorque, 0, 0, 0 , 0);
-							HAL_Delay(100);
-					}
-					slow_start = 0;
-				}
 				motor_controlmode(&mi_motor, outTorque, 0, 0, 0 , 0);
 		}
 		/*
